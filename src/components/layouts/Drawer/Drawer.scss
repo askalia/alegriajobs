@@ -1,0 +1,18 @@
+.navbar-vertical.navbar-expand-lg {
+  z-index: 3;
+  max-width: 33%;
+
+  & h3 {
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 30px;
+    width: 100%;
+    background-color: #f8f9fe;
+    border-bottom: 1px solid #ddd;
+  }
+
+  form {
+    margin-top: 50px;
+  }
+}
