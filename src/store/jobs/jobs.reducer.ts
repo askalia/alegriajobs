@@ -32,7 +32,7 @@ export const jobsReducer = (
             if (state.candidateBookmarkedJobs.includes(jobId)) {
                 return {
                   ...state,
-                  bookmarkedJobs : state.candidateBookmarkedJobs.filter(
+                  candidateBookmarkedJobs : state.candidateBookmarkedJobs.filter(
                     (favJobId) => favJobId !== jobId
                   ),
                 };
