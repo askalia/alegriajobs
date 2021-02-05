@@ -18,13 +18,11 @@ export const jobsReducer = (
     switch (action.type){
         case JobsActions.SET_JOBLIST :
             const jobList = action.payload as Job[];
-            
+            if (state.jobList.length > 0){
+                return state;
+            }
             return {
-                ...state,
-                jobList: [
-                    ...state.jobList,
-                    ...jobList
-                ]
+                jobList
             };
 
         case JobsActions.TOGGLE_BOOKMARK_JOB :
@@ -44,8 +42,8 @@ export const jobsReducer = (
             return {
                 ...state,
                 candidateBookmarkedJobs: [
-                    ...state.candidateBookmarkedJobs,
-                    ...candidateBookmarkedJobs
+                    ...state.candidateBookmarkedJobs || [],
+                    ...candidateBookmarkedJobs ||[]
                 ]
             }
 

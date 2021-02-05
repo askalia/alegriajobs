@@ -54,7 +54,9 @@ import {
 } from "components/sort-direction-icon/sort-direction-icon.component";
 import { jobService } from "shared/services/jobs.service";
 
-interface IJobListViewProps {}
+interface IJobListViewProps {
+  bookmarkedJobsOnly?: boolean;
+}
 
 interface IJobListViewState {
   job: Job | null;
@@ -71,7 +73,7 @@ class JobListView extends React.Component<
   IJobListViewProps,
   IJobListViewState
 > {
-  constructor(props: IJobListViewProps) {
+  constructor(props: IJobListViewProps = { bookmarkedJobsOnly: false }) {
     super(props);
 
     this.state = {
@@ -100,16 +102,16 @@ class JobListView extends React.Component<
   componentDidMount() {
     const { listJobs, listCandidateBookmarkedJobs } = this
       .props as IJoblistDispatchers;
-    listJobs?.();
 
-    listCandidateBookmarkedJobs?.(candidateService.getCandidateId());
+    listJobs?.().then((...args: any[]) => {
+      listCandidateBookmarkedJobs?.(candidateService.getCandidateId());
+    });
   }
 
   isBookmarkedJob = (jobId: string) => {
-    return (this
-      .props as IMapStateToJoblistViewProps).candidateBookmarkedJobs.includes(
-      jobId
-    );
+    return (
+      (this.props as IMapStateToJoblistViewProps)?.candidateBookmarkedJobs || []
+    ).includes(jobId);
   };
 
   bookmarkJob = (jobId: string) => {
@@ -261,6 +263,13 @@ class JobListView extends React.Component<
     }));
   };
 
+  scopeJobs = (jobList: Job[]) => {
+    if (!this.props.bookmarkedJobsOnly) {
+      return jobList;
+    }
+    return jobList.filter((job) => this.isBookmarkedJob(job.id));
+  };
+
   render() {
     return (
       <>
@@ -334,9 +343,10 @@ class JobListView extends React.Component<
                     </tr>
                   </thead>
                   <tbody>
-                    {(this.state.jobList.length
-                      ? this.state.jobList
-                      : (this.props as IMapStateToJoblistViewProps).jobList
+                    {this.scopeJobs(
+                      this.state.jobList.length
+                        ? this.state.jobList
+                        : (this.props as IMapStateToJoblistViewProps).jobList
                     ).map((job) => (
                       <tr
                         key={shortid.generate()}

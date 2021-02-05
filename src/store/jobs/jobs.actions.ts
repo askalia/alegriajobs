@@ -6,6 +6,11 @@ export enum JobsActions {
     MOUNT_CANDIDATE_BOOKMARKED_JOBS = "MOUNT_CANDIDATE_BOOKMARKED_JOBS"  
 }
 
+export interface IMountJoblist {
+    type: JobsActions.SET_JOBLIST;
+    payload: Job[];
+}
+
 export const mountJoblist = (fetchedJoblist: Job[]) => ({
     type: JobsActions.SET_JOBLIST,
     payload: fetchedJoblist
