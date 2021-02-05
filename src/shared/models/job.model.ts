@@ -8,6 +8,8 @@ export interface Job {
         hard_skills: HardSkill[];
         status: Status;
         title: string;
+        description: string;
+        salary: number;
         location: string;
         employer?: Employer;
     }
