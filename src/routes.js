@@ -24,6 +24,7 @@ import Tables from "views/examples/Tables.js";
 import Icons from "views/examples/Icons.js";
 
 import JobListView from "./views/joblist.view/joblist.view"
+import { BookmarkedJobListView } from "./views/bookmarked-joblist/bookmarked-joblist.component"
 
 var routes = [
   {
@@ -62,12 +63,21 @@ var routes = [
     layout: "/admin"
   },
   {
-    path: "/joblist",
-    name: "Job list",
+    path: "/jobs/bookmarked",
+    name: "Bookmarked Jobs",
+    icon: "ni ni-favourite-28 text-red",
+    component: BookmarkedJobListView,
+    layout: "/admin",
+    exact: true,
+  },
+  {
+    path: "/jobs/",
+    name: "Jobs list",    
     icon: "ni ni-bullet-list-67 text-red",
     component: JobListView,
     layout: "/admin"
   },
+  
   {
     path: "/login",
     name: "Login",

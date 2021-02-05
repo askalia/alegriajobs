@@ -1,9 +1,9 @@
 import { Job } from "shared/models";
 import { jobService } from "shared/services/jobs.service";
-import { jobActions } from "./jobs.actions";
+import { IMountJoblist, jobActions } from "./jobs.actions";
 
 export interface IJoblistDispatchers {
-    listJobs: () => void,
+    listJobs: () => Promise<IMountJoblist>,
     toggleCandidateBookmarkJob: (jobId: Job["id"]) => void,
     listCandidateBookmarkedJobs: (memberId: string) => void
 }
@@ -11,7 +11,7 @@ export interface IJoblistDispatchers {
 
 export const JoblistDispatchers = (dispatch: any): IJoblistDispatchers => ({
     listJobs: () => {
-        jobService.listJobs()
+        return jobService.listJobs()
         .then(jobs => dispatch(jobActions.mountJoblist(jobs)))
     },
     toggleCandidateBookmarkJob: (jobId: Job["id"]) => {
