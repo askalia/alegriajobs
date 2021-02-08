@@ -1,0 +1,19 @@
+.ql-editor {
+  height: 10vh !important;
+}
+
+hr {
+  margin: 0;
+}
+
+.navbar-vertical.navbar-expand-lg form,
+Form {
+  margin-top: 0;
+}
+
+.control-required {
+  color: red;
+  &:after {
+    content: " *";
+  }
+}

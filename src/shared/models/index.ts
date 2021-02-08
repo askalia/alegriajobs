@@ -1,5 +1,6 @@
 export * from "./airtable-payload.model"
 export * from "./airtable-record.model"
+export * from "./candidature.model"
 export * from "./category.model"
 export * from "./employer.model"
 export * from "./hard-skill.model"

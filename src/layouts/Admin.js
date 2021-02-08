@@ -33,7 +33,7 @@ class Admin extends React.Component {
     this.refs.mainContent.scrollTop = 0;
   }
   getRoutes = routes => {
-    return routes.map((prop, key) => {
+    return routes.filter(rt => rt?.noDisplay === undefined || rt?.noDisplay === false).map((prop, key) => {
       if (prop.layout === "/admin") {
         return (
           <Route
@@ -65,7 +65,7 @@ class Admin extends React.Component {
       <>
         <Sidebar
           {...this.props}
-          routes={routes}
+          routes={routes.filter(rt => rt?.noDisplay === undefined || rt?.noDisplay === false)}
           logo={{
             innerLink: "/admin/index",
             imgSrc: require("assets/img/brand/argon-react.png"),
