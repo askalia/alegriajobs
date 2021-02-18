@@ -1,8 +1,8 @@
 import { Candidature } from "shared/models";
-import { IApplyJob } from "../../shared/services/candidature.service"
 
 export enum CandidaturesActionsType {
-    APPLY_JOB = "APPLY_JOB"
+    APPLY_JOB = "APPLY_JOB",
+    MOUNT_CANDIDATURES = "MOUNT_CANDIDATURES"
 }
 
 
@@ -11,6 +11,12 @@ const applyJob = (candidatureCreated: Candidature) => ({
     payload: candidatureCreated
 });
 
+const mountCandidatures = (candidatures: Candidature[]) => ({
+    type: CandidaturesActionsType.MOUNT_CANDIDATURES,
+    payload: candidatures
+})
+
 export const candidaturesActions = {
-    applyJob
+    applyJob,
+    mountCandidatures
 }

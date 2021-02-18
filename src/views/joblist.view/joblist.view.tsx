@@ -46,8 +46,8 @@ import {
   CandidaturesDispatchers,
   ICandidaturesDispatchers,
 } from "../../store/candidatures/candidatures.dispatchers";
-import { RootState } from "store/root-reducer";
-import { JobsState } from "store/jobs/jobs.reducer";
+import { IRootStore } from "store/root-reducer";
+import { IJobsStore } from "store/jobs/jobs.reducer";
 import { HardSkill, Job } from "shared/models";
 import { candidateService } from "../../shared/services/candidate.service";
 //import Drawer from "../../components/layouts/Drawer/Drawer";
@@ -110,7 +110,6 @@ class JobListView extends React.Component<
     const { listJobs, listCandidateBookmarkedJobs } = this
       .props as IJoblistDispatchers;
 
-    console.log("ICI : ", listJobs);
     listJobs?.().then((...args: any[]) => {
       listCandidateBookmarkedJobs?.(candidateService.getCandidateId());
     });
@@ -131,30 +130,22 @@ class JobListView extends React.Component<
   }
 
   activateJobDetailView(jobId?: string) {
-    //const jobId = (this.props as RouteComponentProps<{ jobId?: string }>).match
-    //.params.jobId;
-
-    /*console.log('PARAMS : ', (this.props as RouteComponentProps<{ jobId?: string }>).match
-      .params)*/
-    if (jobId !== undefined) {
-      const foundJob = (this.props as IMapStateToJoblistViewProps).jobList.find(
-        (job) => job.id === jobId
-      );
-      console.log("IDDD : ", jobId);
-      //console.log("joB : ", foundJob?.fields?.name);
-
-      foundJob !== undefined &&
-        this.setState(
-          () => ({
-            job: foundJob,
-          }),
-          () => {
-            this.openJobDetailPanel();
-          }
-        );
-    } else {
-      this.closeJobDetailPanel();
+    if (jobId === undefined) {
+      return;
     }
+    const foundJob = (this.props as IMapStateToJoblistViewProps).jobList.find(
+      (job) => job.id === jobId
+    );
+
+    foundJob !== undefined &&
+      this.setState(
+        () => ({
+          job: foundJob,
+        }),
+        () => {
+          this.openJobDetailPanel();
+        }
+      );
   }
 
   isBookmarkedJob = (jobId: string) => {
@@ -189,15 +180,10 @@ class JobListView extends React.Component<
   }
 
   closeJobDetailPanel = () => {
-    this.setState(
-      () => ({
-        openJobDetailPanel: false,
-        job: null,
-      }),
-      () => {
-        //(this.props as RouteComponentProps).history.push(`/admin/jobs`);
-      }
-    );
+    this.setState(() => ({
+      openJobDetailPanel: false,
+      job: null,
+    }));
   };
 
   openJobDetailPanel = () => {
@@ -229,9 +215,7 @@ class JobListView extends React.Component<
     const filteredJobList = [
       ...(this.props as IMapStateToJoblistViewProps).jobList,
     ].filter((job) =>
-      Object.entries(jobProps).some(([propName, searchMatcher]) =>
-        searchMatcher(job)
-      )
+      Object.entries(jobProps).some(([, searchMatcher]) => searchMatcher(job))
     );
 
     this.setState(() => ({
@@ -466,12 +450,12 @@ class JobListView extends React.Component<
 }
 
 type IMapStateToJoblistViewProps = {
-  jobList: JobsState["jobList"];
-  candidateBookmarkedJobs: JobsState["candidateBookmarkedJobs"];
+  jobList: IJobsStore["jobList"];
+  candidateBookmarkedJobs: IJobsStore["candidateBookmarkedJobs"];
 };
 
 const mapStateToJoblistViewProps = (
-  state: RootState
+  state: IRootStore
 ): IMapStateToJoblistViewProps => ({
   jobList: jobListSelectors.getJobsPublished(state),
   candidateBookmarkedJobs: state.jobs.candidateBookmarkedJobs,

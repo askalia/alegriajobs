@@ -1,4 +1,4 @@
-import { callAirtable } from "./airtable.service";
+import { getFromAirtable } from "./airtable.service";
 import { HardSkillService } from "./hardskills.service";
 import { EmployerService } from "./employer.service";
 import { AirtablePayload, Employer, HardSkill, Job, Status } from "../models";
@@ -7,7 +7,7 @@ import { AirtablePayload, Employer, HardSkill, Job, Status } from "../models";
 const listJobs = async (): Promise<Job[]> => {
   const refListHardSkills: HardSkill[] = await HardSkillService.listHardSkills();
   const refListEmployers: Employer[] = await EmployerService.listEmployers();
-  const jobsPayload: AirtablePayload<Job> = await callAirtable({
+  const jobsPayload: AirtablePayload<Job> = await getFromAirtable({
     table: "jobs",
   });
 
@@ -47,11 +47,11 @@ type BookmarkedJobRecord = {
 const listCandidateBookmarkedJobs = async (
   candidateId: string
 ): Promise<Job["id"][]> => {
-  const payload: BookmarkedJobsPayload = await callAirtable({
+  const payload: BookmarkedJobsPayload = await getFromAirtable({
     table: "candidates",
     recordId: candidateId,
   });
-  const bookmarkedJobRecord: BookmarkedJobRecord = await callAirtable({
+  const bookmarkedJobRecord: BookmarkedJobRecord = await getFromAirtable({
     table: "bookmarked_jobs",
     recordId: (payload?.fields?.bookmarked_jobs || [])[0],
   });

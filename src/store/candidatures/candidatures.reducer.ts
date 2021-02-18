@@ -1,29 +1,39 @@
 import { Candidature } from "../../shared/models"
 import { CandidaturesActionsType } from "./candidatures.actions"
 
-export interface CandidaturesState {
-    candidatures: Candidature[]
-}
+export type ICandidaturesStore = Candidature[];
 
-const initialCandidaturesState: CandidaturesState = {
-    candidatures : []
-}
+const initialCandidaturesStore: ICandidaturesStore = [];
 
 export const candidaturesReducer = (
-    state: CandidaturesState = initialCandidaturesState,
+    store: ICandidaturesStore = initialCandidaturesStore,
     action :{ type: CandidaturesActionsType, payload: unknown }
 ) => {
     switch (action.type){
         case CandidaturesActionsType.APPLY_JOB :
-            const candidatureCreated = action.payload as Candidature;
-            return {
-                ...state,
-                candidatures: [
-                    ...state.candidatures,
-                    candidatureCreated
-                ]
-            }
+            return applyJob(store, action.payload as Candidature)
+
+        case CandidaturesActionsType.MOUNT_CANDIDATURES : 
+            return mountCandidatures(store, action.payload as Candidature[]);
         default :
-            return state
+            return store
     }
+}
+
+const applyJob = (store: ICandidaturesStore, candidatureCreated: Candidature) => ({
+    ...store,
+    candidatures: [
+        ...store,
+        candidatureCreated
+    ]
+})
+
+const mountCandidatures = (store: ICandidaturesStore, listCandidatures: Candidature[]) => {
+    if (store.length > 0){
+        return store;
+    }    
+    return [
+        ...store,
+        ...listCandidatures
+    ]
 }

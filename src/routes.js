@@ -25,6 +25,7 @@ import Icons from "views/examples/Icons.js";
 
 import JobListView from "./views/joblist.view/joblist.view"
 import { BookmarkedJobListView } from "./views/bookmarked-joblist/bookmarked-joblist.component"
+import AppliedJobListView from "./views/applied-joblist/applied-joblist.view.component"
 
 var routes = [
   {
@@ -95,6 +96,22 @@ var routes = [
     component: BookmarkedJobListView,
     layout: "/admin",
     exact: true,
+  },
+  {
+    path: "/jobs/applied",
+    name: "Jobs applied",    
+    icon: "ni ni-send text-blue",
+    component: AppliedJobListView,
+    layout: "/admin",
+    //noDisplay: true
+  },
+  {
+    path: "/jobs/applied/:candidatureId",
+    name: "Jobs applied ID",    
+    icon: "ni ni-send text-blue",
+    component: AppliedJobListView,
+    layout: "/admin",    
+    //noDisplay: true
   },
   {
     path: "/jobs/:jobId",

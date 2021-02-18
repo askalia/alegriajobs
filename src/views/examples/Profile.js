@@ -115,11 +115,11 @@ class Profile extends React.Component {
                       University of Computer Science
                     </div>
                     <hr className="my-4" />
-                    <p>
+                    <div>
                       Ryan — the name taken by Melbourne-raised, Brooklyn-based
                       Nick Murphy — writes, performs and records all of his own
                       music.
-                    </p>
+                    </div>
                     <a href="#pablo" onClick={e => e.preventDefault()}>
                       Show more
                     </a>

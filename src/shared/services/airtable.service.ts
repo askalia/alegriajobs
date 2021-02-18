@@ -11,9 +11,8 @@ type AirtableSetup = {
 type AirtableGetOptions = {
     table: TableName,
     recordId?: string,
-    filters?: {
-        [key: string]: string
-    }
+    filters?: (() => string)[]
+        
 }
 
 type AirtablePostPutOptions<T> = {
@@ -31,7 +30,11 @@ const setup: AirtableSetup = {
 
 
 const setupAirtableGet = async ({ table, recordId, filters }: AirtableGetOptions) => {
-    const url = `${setup.BASE_URL}/v${setup.API_VERSION || 0}/${setup.BASE_ID}/${table}${recordId ? `/${recordId}` : ''}?api_key=${setup.API_KEY}`;
+    let url = `${setup.BASE_URL}/v${setup.API_VERSION || 0}/${setup.BASE_ID}/${table}${recordId ? `/${recordId}` : ''}?api_key=${setup.API_KEY}`;
+    if (filters){
+        url += '&filterByFormula='+(filters || []).map(filterFunc => filterFunc()).join('&')
+    }
+    
     console.log('url get: ', url)
     const response = await fetch(url);
     return response.json();
@@ -50,11 +53,11 @@ const setupAirtablePostPut = async <T>({ table, recordId, payload }: AirtablePos
     return response.json();
 }
 
-export const callAirtable = ({ table, recordId, filters}: AirtableGetOptions) => {    
+export const getFromAirtable = ({ table, recordId, filters}: AirtableGetOptions) => {    
     return setupAirtableGet({ table, recordId, filters});
 }
 
-export const postAirtable = <T>({ table, payload }: AirtablePostPutOptions<T>) => {
+export const postToAirtable = <T>({ table, payload }: AirtablePostPutOptions<T>) => {
     return setupAirtablePostPut<T>({ table, payload });
 }
 

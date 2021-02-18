@@ -1,53 +1,118 @@
 import { Job } from "../../shared/models"
-import { JobsActions } from "./jobs.actions"
+import {  JobsActionTypes } from "./jobs.actions"
 
-export interface JobsState {
-    jobList: Job[]
-    candidateBookmarkedJobs: Job['id'][]
+export interface IJobsStore {
+    jobList: Job[];
+    candidateBookmarkedJobs: Job['id'][];
 }
 
-const initialJoblistState: JobsState = {
+const initialJoblistStore: IJobsStore = {
     jobList: [],
     candidateBookmarkedJobs: []
 }
 
+function reducerBuilder<S, A>(store: S) {    
+    var reducersMap = new Map<A, Function>();        
+    const api = {
+        set: (actionType: A, reducerFunction: Function) => {
+            reducersMap.set(actionType, reducerFunction);
+            return api;
+        },
+        run: (actionType: A, payload: unknown) => reducersMap.has(actionType) ? reducersMap.get(actionType)?.(store, payload) : store
+    }
+    return api;
+    
+}
+
+
 export const jobsReducer = (
-    state: JobsState = initialJoblistState,
-    action: { type: JobsActions, payload: unknown }
+    store: IJobsStore = initialJoblistStore,
+    action: { type: JobsActionTypes, payload: unknown }
 ) => {
-    switch (action.type){
-        case JobsActions.SET_JOBLIST :
-            const jobList = action.payload as Job[];
-            if (state.jobList.length > 0){
-                return state;
+    
+    return reducerBuilder<IJobsStore, JobsActionTypes>(store)
+    .set(JobsActionTypes.SET_JOBLIST, setJobList)
+    .set(JobsActionTypes.TOGGLE_BOOKMARK_JOB, toogleBookmarkJob)
+    .set(JobsActionTypes.MOUNT_CANDIDATE_BOOKMARKED_JOBS, mountCandidatureBookmarkedJobs)
+    .run(action.type, action.payload)
+    
+}
+
+
+
+const setJobList = (store: IJobsStore, jobList: Job[]) => {
+    console.log('setJobList ')
+    if (store.jobList.length > 0){            
+        return store;
+    }
+    const c = {
+        ...store,
+        jobList: [
+            ...store.jobList,
+            ...jobList
+        ]
+    };
+    console.log('CCC : ', c)
+    return c;
+};
+
+const toogleBookmarkJob = (store: IJobsStore, jobId: string) => {
+    if (store.candidateBookmarkedJobs.includes(jobId)) {
+        return {
+            ...store,
+            candidateBookmarkedJobs : store.candidateBookmarkedJobs.filter(
+            (favJobId) => favJobId !== jobId
+            ),
+        };
+    }
+    return { ...store, candidateBookmarkedJobs: [...store.candidateBookmarkedJobs , jobId] };
+};
+
+const mountCandidatureBookmarkedJobs = (store: IJobsStore, candidateBookmarkedJobs: Job["id"][]) => ({
+    ...store,
+    candidateBookmarkedJobs: [
+        ...store.candidateBookmarkedJobs || [],
+        ...candidateBookmarkedJobs ||[]
+    ]
+})
+
+/*
+const runReducer = (store: IJobsStore) => {
+    const _listReducers = (store: IJobsStore) => ({
+        [JobsActionTypes.SET_JOBLIST as string] : (c): IJobsStore => {
+            if (store.jobList.length > 0){            
+                return store;
             }
             return {
-                jobList
+                ...store,
+                jobList: [
+                    ...store.jobList,
+                    ...jobList
+                ]
             };
-
-        case JobsActions.TOGGLE_BOOKMARK_JOB :
-            const jobId = action.payload as string;
-            if (state.candidateBookmarkedJobs.includes(jobId)) {
+        },
+        [JobsActionTypes.TOGGLE_BOOKMARK_JOB as string] : (jobId: string): IJobsStore => {        
+            if (store.candidateBookmarkedJobs.includes(jobId)) {
                 return {
-                  ...state,
-                  candidateBookmarkedJobs : state.candidateBookmarkedJobs.filter(
+                    ...store,
+                    candidateBookmarkedJobs : store.candidateBookmarkedJobs.filter(
                     (favJobId) => favJobId !== jobId
-                  ),
+                    ),
                 };
-              }
-              return { ...state, candidateBookmarkedJobs: [...state.candidateBookmarkedJobs , jobId] };
-
-        case JobsActions.MOUNT_CANDIDATE_BOOKMARKED_JOBS : 
-        const candidateBookmarkedJobs = action.payload as Job["id"][];
+            }
+            return { ...store, candidateBookmarkedJobs: [...store.candidateBookmarkedJobs , jobId] };
+        },
+        [JobsActionTypes.MOUNT_CANDIDATE_BOOKMARKED_JOBS as string] : (candidateBookmarkedJobs: Job["id"][] ): IJobsStore => {
             return {
-                ...state,
+                ...store,
                 candidateBookmarkedJobs: [
-                    ...state.candidateBookmarkedJobs || [],
+                    ...store.candidateBookmarkedJobs || [],
                     ...candidateBookmarkedJobs ||[]
                 ]
             }
-
-        default: 
-            return state;
-    }
-}
+        }        
+    });
+    return (action: { type: JobsActionTypes, payload: unknown }): IJobsStore => (
+        (_listReducers(store)[action.type] as Function)?.(action.payload) || store
+    )
+}*/

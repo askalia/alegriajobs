@@ -48,7 +48,7 @@ export const JobDetailPanel: FC<JobDetailPanelProps> = ({
           >
             {job?.fields?.category}
           </Badge>
-          &#160;&#160;{job?.fields?.title}{" "}
+          &#160;&#160;{job?.fields?.title}
           <span style={{ float: "right" }}>
             {formatSalary(job?.fields?.salary || 0)} € per annum
           </span>
@@ -101,7 +101,7 @@ export const JobDetailPanel: FC<JobDetailPanelProps> = ({
                   >
                     Location
                   </label>
-                  <p>{job?.fields?.location || "N.C."}</p>
+                  <div>{job?.fields?.location || "N.C."}</div>
                 </FormGroup>
               </Col>
               <Col lg="4" className="company-container">
@@ -109,11 +109,11 @@ export const JobDetailPanel: FC<JobDetailPanelProps> = ({
                   <label className="form-control-label" htmlFor="input-email">
                     Company
                   </label>
-                  <p>
+                  <div>
                     <a href={`mailto:${job?.fields.employer?.email}`}>
                       {job?.fields?.employer?.name}
                     </a>
-                  </p>
+                  </div>
                 </FormGroup>
               </Col>
               <Col lg="12 text-center">

@@ -12,6 +12,8 @@ export interface Job {
         salary: number;
         location: string;
         employer?: Employer;
+        tag: string;
     }
+    
     createdAt: Date|string;
 }

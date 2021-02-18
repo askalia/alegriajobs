@@ -1,10 +1,10 @@
 import { createSelector } from "reselect"
-import { RootState } from "../root-reducer"
-import { JobsState } from "./jobs.reducer"
+import { IRootStore } from "../root-reducer"
+import { IJobsStore } from "./jobs.reducer"
 
-const getJobsFromStore = (state: RootState): JobsState => state.jobs
+const getJobsFromStore = (state: IRootStore): IJobsStore => state.jobs
 
-export const getJobsPublished = createSelector([getJobsFromStore], (jobs: JobsState) => {
+export const getJobsPublished = createSelector([getJobsFromStore], (jobs: IJobsStore) => {
     return jobs.jobList.filter(job => job.fields.status === "published")
 })
 

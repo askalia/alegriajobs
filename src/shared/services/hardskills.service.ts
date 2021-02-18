@@ -1,8 +1,8 @@
 import {HardSkill, AirtablePayload } from '../models'
-import { callAirtable} from "./airtable.service"
+import { getFromAirtable} from "./airtable.service"
 
 export const listHardSkills = async (): Promise<HardSkill[]> => {
-    const payload: AirtablePayload = await callAirtable({
+    const payload: AirtablePayload = await getFromAirtable({
       table: "hard_skills",
     });
     return payload?.records.map(({ id, fields: { name, category } }) => ({
