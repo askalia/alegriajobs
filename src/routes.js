@@ -25,6 +25,7 @@ import Icons from "views/examples/Icons.js";
 
 import JobListView from "./views/joblist.view/joblist.view"
 import { BookmarkedJobListView } from "./views/bookmarked-joblist/bookmarked-joblist.component"
+import AppliedJobListView from "./views/applied-joblist/applied-joblist.view.component"
 
 var routes = [
   {
@@ -62,6 +63,24 @@ var routes = [
     component: Tables,
     layout: "/admin"
   },
+
+  
+  {
+    path: "/jobs",
+    name: "Jobs list",    
+    icon: "ni ni-bullet-list-67 text-red",
+    component: JobListView,
+    layout: "/admin",
+    exact: true
+  },
+  
+  {
+    path: "/login",
+    name: "Login",
+    icon: "ni ni-key-25 text-info",
+    component: Login,
+    layout: "/auth"
+  },
   {
     path: "/jobs/bookmarked",
     name: "Bookmarked Jobs",
@@ -71,19 +90,36 @@ var routes = [
     exact: true,
   },
   {
-    path: "/jobs/",
-    name: "Jobs list",    
+    path: "/jobs/bookmarked/:jobId",
+    name: "Bookmarked Jobs ID",
+    icon: "ni ni-favourite-28 text-red",
+    component: BookmarkedJobListView,
+    layout: "/admin",
+    exact: true,
+  },
+  {
+    path: "/jobs/applied",
+    name: "Jobs applied",    
+    icon: "ni ni-send text-blue",
+    component: AppliedJobListView,
+    layout: "/admin",
+    //noDisplay: true
+  },
+  {
+    path: "/jobs/applied/:candidatureId",
+    name: "Jobs applied ID",    
+    icon: "ni ni-send text-blue",
+    component: AppliedJobListView,
+    layout: "/admin",    
+    //noDisplay: true
+  },
+  {
+    path: "/jobs/:jobId",
+    name: "Jobs list ID",    
     icon: "ni ni-bullet-list-67 text-red",
     component: JobListView,
-    layout: "/admin"
-  },
-  
-  {
-    path: "/login",
-    name: "Login",
-    icon: "ni ni-key-25 text-info",
-    component: Login,
-    layout: "/auth"
+    layout: "/admin",
+    //noDisplay: true
   },
   {
     path: "/register",
