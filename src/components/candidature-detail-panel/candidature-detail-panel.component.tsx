@@ -39,7 +39,7 @@ export const CandidatureDetailPanel: FC<CandidatureDetailPanelProps> = ({
       >
         <h3 className="p-10">
           You've applied to :{" "}
-          <Link to={`/admin/jobs/${job.id}`}  rel="noreferrer">
+          <Link to={`/candidate/jobs/${job.id}`} rel="noreferrer">
             {job?.fields?.title}
           </Link>
         </h3>
@@ -51,20 +51,24 @@ export const CandidatureDetailPanel: FC<CandidatureDetailPanelProps> = ({
             <FormGroup>
               <label className="form-control-label">Your resume</label>
               <div className="md-description">
-                {candidature?.fields?.resume[0]?.url.includes(".pdf") && (
-                  <Document file={candidature?.fields?.resume[0]?.url}>
+                {(candidature?.fields?.resume || [])[0]?.url?.includes(
+                  ".pdf"
+                ) && (
+                  <Document file={(candidature?.fields?.resume || [])[0]?.url}>
                     <Page pageNumber={1} />
                   </Document>
                 )}
-                {!candidature?.fields?.resume[0]?.url.includes(".pdf") && (
+                {!(candidature?.fields?.resume || [])[0]?.url.includes(
+                  ".pdf"
+                ) && (
                   <a
-                    href={candidature?.fields?.resume[0]?.url}
+                    href={(candidature?.fields?.resume || [])[0]?.url}
                     target="_blank"
                     rel="noreferrer"
                   >
                     <img
-                      src={candidature?.fields?.resume[0]?.url}
-                      alt={candidature.fields.resume[0].filename}
+                      src={(candidature?.fields?.resume || [])[0]?.url}
+                      alt={(candidature.fields.resume || [])[0]?.filename}
                     />
                   </a>
                 )}

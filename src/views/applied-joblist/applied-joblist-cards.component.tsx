@@ -19,39 +19,45 @@ export const AppliedJoblistCards: FC<IAppliedJoblistCardsProps> = ({
   findJobById,
   onSelect,
 }) => (
-  <>
-    {candidatures.map((candidature) => {
-      const job = findJobById(candidature.fields.job[0] as string);
-      return (
-        <Card style={{ width: "20rem" }} key={shortid.generate()}>
-          <CardImg
-            alt="..."
-            src={require(`assets/img/jobs/${job?.fields?.tag}.jpg`).default}
-            top
-          />
-          <CardBody>
-            <CardTitle className="text-center">
-              <h3>{job?.fields?.title}</h3>
-            </CardTitle>
-            <CardText>
-              <Markdown>
-                {job?.fields?.description.split(" ").splice(0, 30).join(" ") +
-                  "..."}
-              </Markdown>
-            </CardText>
-            <Button
-              block
-              color="primary"
-              href="#pablo"
-              onClick={(e: any) => onSelect(candidature, e)}
-            >
-              View
-            </Button>
-          </CardBody>
-        </Card>
-      );
-    })}
-  </>
+  <div className="jobs-applied-container">
+    <ul>
+      {(candidatures || []).map((candidature) => {
+        const job = findJobById(candidature.fields.job[0] as string);
+        return (
+          <li key={shortid.generate()}>
+            <Card style={{ width: "20rem" }} key={`jobcard-${job?.id}`}>
+              <CardImg
+                alt="..."
+                src={require(`assets/img/jobs/${job?.fields?.tag}.jpg`).default}
+                top
+              />
+              <CardBody>
+                <CardTitle className="text-center">
+                  <h3>{job?.fields?.title}</h3>
+                </CardTitle>
+                <CardText>
+                  <Markdown>
+                    {(job?.fields?.description || "")
+                      .split(" ")
+                      .splice(0, 30)
+                      .join(" ") + "..."}
+                  </Markdown>
+                </CardText>
+                <Button
+                  block
+                  color="primary"
+                  href="#pablo"
+                  onClick={(e: any) => onSelect(candidature, e)}
+                >
+                  View
+                </Button>
+              </CardBody>
+            </Card>
+          </li>
+        );
+      })}
+    </ul>
+  </div>
 );
 
 interface IAppliedJoblistCardsProps {

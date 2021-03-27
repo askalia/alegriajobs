@@ -20,6 +20,8 @@ import {
   JoblistDispatchers,
 } from "store/jobs/jobs.dispatchers";
 
+import "./applied-joblist.view.component.scss"
+
 interface IAppliedJobListViewState {
   displayAs: "CARDS" | "TABLE";
   //openCandidatureDetailPanel: boolean;
@@ -95,7 +97,7 @@ class AppliedJobListView extends React.Component<
     this.setState(() => ({
       currentCandidature: null,
     }));
-    (this.props as RouteComponentProps).history.push(`/admin/jobs/applied`);
+    (this.props as RouteComponentProps).history.push(`/candidate/jobs/applied`);
   };
 
   findJobById = (jobId: string) => {
@@ -112,7 +114,7 @@ class AppliedJobListView extends React.Component<
       return;
     }
     (this.props as RouteComponentProps).history.push(
-      `/admin/jobs/applied/${routeSuffix}`
+      `/candidate/jobs/applied/${routeSuffix}`
     );
   }
 
@@ -146,7 +148,7 @@ class AppliedJobListView extends React.Component<
             />
           )}
           <Row>
-            <div className="col">
+            <div className="col list-jobs-applied">
               {this.state.displayAs === "TABLE" ? (
                 <AppliedJoblistTable {...panelsCommonProps} />
               ) : (

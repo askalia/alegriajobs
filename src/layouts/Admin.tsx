@@ -16,25 +16,43 @@
 
 */
 import React from "react";
-import { Route, Switch, Redirect } from "react-router-dom";
+import {
+  Route,
+  Switch,
+  Redirect,
+  withRouter,
+  RouteComponentProps,
+} from "react-router-dom";
 // reactstrap components
 import { Container } from "reactstrap";
 // core components
 import AdminNavbar from "components/layouts/Navbars/AdminNavbar.js";
 import AdminFooter from "components/layouts/Footers/AdminFooter.js";
 import Sidebar from "components/layouts/Sidebar/Sidebar.js";
+import {
+  FirebaseUnsubscribe,
+  FirebaseUser,
+} from "../shared/services/firebase-utils.service";
+import {
+  IUserMapDispatchToProps,
+  mapUserDispatchToProps,
+} from "../store/user/user.actions";
 
 import routes from "routes.js";
+import { IRootStore } from "store/root-reducer";
+import { connect } from "react-redux";
 
-class Admin extends React.Component {
-  componentDidUpdate(e) {
+class Admin extends React.Component<
+  RouteComponentProps & IUserMapDispatchToProps
+> {
+  componentDidUpdate() {
     document.documentElement.scrollTop = 0;
-    document.scrollingElement.scrollTop = 0;
-    this.refs.mainContent.scrollTop = 0;
+    document?.scrollingElement && (document.scrollingElement.scrollTop = 0);
+    //this.refs.mainContent.scrollTop = 0;
   }
-  getRoutes = routes => {
-    return routes.filter(rt => rt?.noDisplay === undefined || rt?.noDisplay === false).map((prop, key) => {
-      if (prop.layout === "/admin") {
+  getRoutes = (routes: any[]) => {
+    return routes.map((prop, key) => {
+      if (prop?.layout === "/admin" || prop?.layout === "/candidate") {
         return (
           <Route
             path={prop.layout + prop.path}
@@ -48,7 +66,8 @@ class Admin extends React.Component {
       }
     });
   };
-  getBrandText = path => {
+
+  getBrandText = (path?: string) => {
     for (let i = 0; i < routes.length; i++) {
       if (
         this.props.location.pathname.indexOf(
@@ -60,26 +79,27 @@ class Admin extends React.Component {
     }
     return "Brand";
   };
+
   render() {
     return (
       <>
         <Sidebar
           {...this.props}
-          routes={routes.filter(rt => rt?.noDisplay === undefined || rt?.noDisplay === false)}
+          routes={routes}
           logo={{
-            innerLink: "/admin/index",
+            innerLink: "/candidate/jobs",
             imgSrc: require("assets/img/brand/argon-react.png"),
-            imgAlt: "..."
+            imgAlt: "...",
           }}
         />
-        <div className="main-content" ref="mainContent">
+        <div className="main-content">
           <AdminNavbar
             {...this.props}
             brandText={this.getBrandText(this.props.location.pathname)}
           />
           <Switch>
             {this.getRoutes(routes)}
-            <Redirect from="*" to="/admin/index" />
+            <Redirect from="*" to="/candidate/jobs" />
           </Switch>
           <Container fluid>
             <AdminFooter />
@@ -90,4 +110,14 @@ class Admin extends React.Component {
   }
 }
 
-export default Admin;
+type IUserMapStateToProps = {
+  currentUser: FirebaseUser | null;
+};
+const mapStateToProps = (store: IRootStore): IUserMapStateToProps => ({
+  currentUser: store.user.currentUser,
+});
+
+export default connect(
+  mapStateToProps,
+  mapUserDispatchToProps
+)(withRouter(Admin));

@@ -15,18 +15,18 @@ export const candidaturesReducer = (
 
         case CandidaturesActionsType.MOUNT_CANDIDATURES : 
             return mountCandidatures(store, action.payload as Candidature[]);
+
+        case CandidaturesActionsType.REFRESH_CANDIDATURES : 
+            return refreshCandidatures(store, action.payload as Candidature[]);
         default :
             return store
     }
 }
 
-const applyJob = (store: ICandidaturesStore, candidatureCreated: Candidature) => ({
+const applyJob = (store: ICandidaturesStore, candidatureCreated: Candidature) => ([
     ...store,
-    candidatures: [
-        ...store,
-        candidatureCreated
-    ]
-})
+    candidatureCreated
+]);
 
 const mountCandidatures = (store: ICandidaturesStore, listCandidatures: Candidature[]) => {
     if (store.length > 0){
@@ -36,4 +36,8 @@ const mountCandidatures = (store: ICandidaturesStore, listCandidatures: Candidat
         ...store,
         ...listCandidatures
     ]
+}
+
+const refreshCandidatures = (store: ICandidaturesStore, listCandidatures: Candidature[]) => {
+    return listCandidatures
 }

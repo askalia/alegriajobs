@@ -41,7 +41,7 @@ class Login extends React.Component {
           <Card className="bg-secondary shadow border-0">
             <CardHeader className="bg-transparent pb-5">
               <div className="text-muted text-center mt-2 mb-3">
-                <small>Sign in with</small>
+                <small>Sign in withXXXX</small>
               </div>
               <div className="btn-wrapper text-center">
                 <Button

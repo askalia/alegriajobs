@@ -10,6 +10,7 @@ export type IApplyJob = { job: Job, candidateId: string, resume: File, coverLett
 const applyJob = async ({ job, candidateId, resume, coverLetter} : IApplyJob): Promise<Candidature> => {
     const customFileName = shortid.generate();
     const filePublicUrl = await fileUploadService.uploadFile(resume, customFileName)    
+    console.log('filePublicUrl : ', filePublicUrl)
     if (filePublicUrl !== undefined){
         const data = {
             fields: {
@@ -20,8 +21,8 @@ const applyJob = async ({ job, candidateId, resume, coverLetter} : IApplyJob): P
               ],
               resume: [
                 {
-                    filename: ("" + filePublicUrl)?.split('/')?.pop()?.replace(".pdf", ".png"),
-                  url: filePublicUrl.replace(".pdf", ".png")
+                  filename: filePublicUrl.split('/').pop(),
+                  url: filePublicUrl
                 }
               ],                          
             }
@@ -43,15 +44,12 @@ const listCandidatures = async (
   const candidatures: { records: Candidature[] } = await getFromAirtable({
     table: "candidatures",
     filters : [
-      () => `FIND("${candidateId}", candidate)`
+      `FIND("${candidateId}", candidate)`
     ]
   });  
   return candidatures.records;
 };
   
-
-
-
 export const candidatureService = {
     applyJob,
     listCandidatures

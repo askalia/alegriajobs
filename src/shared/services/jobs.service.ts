@@ -1,7 +1,7 @@
 import { getFromAirtable } from "./airtable.service";
 import { HardSkillService } from "./hardskills.service";
 import { EmployerService } from "./employer.service";
-import { AirtablePayload, Employer, HardSkill, Job, Status } from "../models";
+import { AirtablePayload, Candidature, Employer, HardSkill, Job, Status } from "../models";
 
 
 const listJobs = async (): Promise<Job[]> => {
@@ -9,9 +9,8 @@ const listJobs = async (): Promise<Job[]> => {
   const refListEmployers: Employer[] = await EmployerService.listEmployers();
   const jobsPayload: AirtablePayload<Job> = await getFromAirtable({
     table: "jobs",
+    view: "jobs_published"    
   });
-
-  console.log('JOBS PAYLOAD')
 
   return jobsPayload.records.map(({ id, fields, ...rest }: Job) => ({
     id,
@@ -63,10 +62,18 @@ const statusPositions: string[] = [
   "draft",
   "published",
   "retired"
-]
+];
+
+const canApplyJob = (job: Job, listJobsApplied: Candidature[]): boolean => {
+  const foundJob = (listJobsApplied || []).find((jobApplied) =>
+    jobApplied?.fields?.job?.includes(job?.id)
+  );  
+  return foundJob === undefined; 
+}
 
 export const jobService = {
   listJobs,
   listCandidateBookmarkedJobs,
   statusPositions,
+  canApplyJob
 };

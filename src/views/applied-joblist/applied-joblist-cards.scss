@@ -1,3 +1,14 @@
-.card {
-  box-shadow: 0 0 2rem 0 rgba(136, 152, 170, 0.15) !important;
+.jobs-applied-container {
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  ul li {
+    flex: 0 0 33.333333%;
+  }
+
+  .card {
+    box-shadow: 0 0 2rem 0 rgba(136, 152, 170, 0.15) !important;
+    margin-bottom: 2em;
+  }
 }

@@ -60,6 +60,8 @@ import { jobService } from "shared/services/jobs.service";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 
 import { jobListSelectors } from "../../store/jobs/jobs.selectors";
+import { ICandidateState } from "store/candidate/candidate.reducer.js";
+import { ICandidaturesStore } from "store/candidatures/candidatures.reducer.js";
 
 type IJobListViewProps = {
   bookmarkedJobsOnly?: boolean;
@@ -105,14 +107,16 @@ class JobListView extends React.Component<
     );
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     console.log("componentDidMount");
-    const { listJobs, listCandidateBookmarkedJobs } = this
-      .props as IJoblistDispatchers;
+    const { listJobs, listCandidateBookmarkedJobs, refreshCandidatures } = this
+      .props as IJoblistDispatchers & {
+      refreshCandidatures: (candidateId: string) => Promise<void>;
+    };
 
-    listJobs?.().then((...args: any[]) => {
-      listCandidateBookmarkedJobs?.(candidateService.getCandidateId());
-    });
+    await listJobs?.();
+    await listCandidateBookmarkedJobs?.(candidateService.getCandidateId());
+    await refreshCandidatures?.(candidateService.getCandidateId());
 
     const router = this.props as RouteComponentProps;
 
@@ -122,6 +126,7 @@ class JobListView extends React.Component<
     });
     const jobId = (this.props as RouteComponentProps<{ jobId?: string }>).match
       .params.jobId;
+    console.log("jobId: here ", jobId);
     this.activateJobDetailView(jobId);
   }
 
@@ -136,6 +141,7 @@ class JobListView extends React.Component<
     const foundJob = (this.props as IMapStateToJoblistViewProps).jobList.find(
       (job) => job.id === jobId
     );
+    console.log("foundJob : ", foundJob);
 
     foundJob !== undefined &&
       this.setState(
@@ -172,8 +178,8 @@ class JobListView extends React.Component<
 
   followRoute(routeSuffix: string) {
     const baseUrl = this.props.bookmarkedJobsOnly
-      ? "/admin/jobs/bookmarked"
-      : "/admin/jobs";
+      ? "/candidate/jobs/bookmarked"
+      : "/candidate/jobs";
     (this.props as RouteComponentProps).history.push(
       `${baseUrl}/${routeSuffix}`
     );
@@ -312,6 +318,12 @@ class JobListView extends React.Component<
     return jobList.filter((job) => this.isBookmarkedJob(job.id));
   };
 
+  canApplyJob = (job: Job) => {
+    return jobService.canApplyJob(job, (this
+      .props as IMapStateToJoblistViewProps).jobsApplied);
+    
+  };
+
   render() {
     return (
       <>
@@ -324,6 +336,7 @@ class JobListView extends React.Component<
             <JobDetailPanel
               job={this.state.job as Job}
               close={this.closeJobDetailPanel}
+              canApplyJob={this.canApplyJob(this.state.job as Job)}
               applyJob={(this.props as ICandidaturesDispatchers).applyJob}
             />
           )}
@@ -452,6 +465,7 @@ class JobListView extends React.Component<
 type IMapStateToJoblistViewProps = {
   jobList: IJobsStore["jobList"];
   candidateBookmarkedJobs: IJobsStore["candidateBookmarkedJobs"];
+  jobsApplied: ICandidaturesStore;
 };
 
 const mapStateToJoblistViewProps = (
@@ -459,6 +473,7 @@ const mapStateToJoblistViewProps = (
 ): IMapStateToJoblistViewProps => ({
   jobList: jobListSelectors.getJobsPublished(state),
   candidateBookmarkedJobs: state.jobs.candidateBookmarkedJobs,
+  jobsApplied: state.candidatures,
 });
 
 const combineMapDispatchToProps = (dispatch: any) => ({

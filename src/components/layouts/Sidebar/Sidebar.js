@@ -17,7 +17,7 @@
 */
 /*eslint-disable*/
 import React from "react";
-import { NavLink as NavLinkRRD, Link } from "react-router-dom";
+import { NavLink as NavLinkRRD, Link, withRouter } from "react-router-dom";
 // nodejs library to set properties for components
 import { PropTypes } from "prop-types";
 
@@ -51,6 +51,8 @@ import {
   Row,
   Col
 } from "reactstrap";
+import { auth } from "shared/services/firebase-utils.service";
+import candidateAuthService from "shared/services/candidate-auth.service";
 
 var ps;
 
@@ -96,6 +98,17 @@ class Sidebar extends React.Component {
       );
     });
   };
+
+  logOut = async (e) => {
+    e.preventDefault();
+    await candidateAuthService.logOut();
+    
+      console.log('LOGOUT');
+      this.props.history.push('/')
+    
+    
+  } 
+  
   render() {
     const { bgColor, routes, logo } = this.props;
     let navbarBrandProps;
@@ -167,24 +180,24 @@ class Sidebar extends React.Component {
                 <DropdownItem className="noti-title" header tag="div">
                   <h6 className="text-overflow m-0">Welcome!</h6>
                 </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
+                <DropdownItem to="/candidate/user-profile" tag={Link}>
                   <i className="ni ni-single-02" />
                   <span>My profile</span>
                 </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
+                <DropdownItem to="/candidate/user-profile" tag={Link}>
                   <i className="ni ni-settings-gear-65" />
                   <span>Settings</span>
                 </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
+                <DropdownItem to="/candidate/user-profile" tag={Link}>
                   <i className="ni ni-calendar-grid-58" />
                   <span>Activity</span>
                 </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
+                <DropdownItem to="/candidate/user-profile" tag={Link}>
                   <i className="ni ni-support-16" />
                   <span>Support</span>
                 </DropdownItem>
                 <DropdownItem divider />
-                <DropdownItem href="#pablo" onClick={e => e.preventDefault()}>
+                <DropdownItem href="#pablo" onClick={this.logOut}>
                   <i className="ni ni-user-run" />
                   <span>Logout</span>
                 </DropdownItem>
@@ -300,4 +313,4 @@ Sidebar.propTypes = {
   })
 };
 
-export default Sidebar;
+export default withRouter(Sidebar);

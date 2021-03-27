@@ -5,7 +5,7 @@ import { IJobsStore } from "./jobs.reducer"
 const getJobsFromStore = (state: IRootStore): IJobsStore => state.jobs
 
 export const getJobsPublished = createSelector([getJobsFromStore], (jobs: IJobsStore) => {
-    return jobs.jobList.filter(job => job.fields.status === "published")
+    return jobs.jobList;
 })
 
 export const jobListSelectors = {

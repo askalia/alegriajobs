@@ -1,5 +1,3 @@
-import { Job } from "./job.model";
-
 
 export interface Thumbnails {
     small: {
