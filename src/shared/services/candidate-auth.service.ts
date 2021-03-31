@@ -3,8 +3,13 @@ import { getFromAirtable } from "./airtable.service";
 import { auth, FirebaseUser } from "./firebase-utils.service";
 const CANDIDATE_AIRTABLE_KEY = 'candidate-aitable';
 const candidateAuthService = {
-    async logOut(){
-        return auth.signOut();
+    logOut(){
+        auth.signOut()
+        .then(() => {
+            candidateAuthService.clearCandidate();
+            window.location.href = "/auth/login";
+        })
+        
     },
     async signIn(email: FirebaseUser["email"], password: string){        
         return auth.signInWithEmailAndPassword(email as string, password);

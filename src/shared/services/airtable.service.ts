@@ -12,8 +12,12 @@ type AirtableGetOptions = {
     table: TableName,
     view?: string,
     recordId?: string,
-    filters?: string[]
-        
+    filters?: string[]        
+}
+
+type AirtableDeleteOptions<T> = {
+    table: TableName,
+    recordId: T;
 }
 
 type AirtablePostOptions<T> = {
@@ -23,7 +27,7 @@ type AirtablePostOptions<T> = {
 
 type AirtablePutOptions<T> = {
     table: TableName,
-    recordId: string
+    recordId?: string
     payload: T | Object;
 }
 
@@ -44,12 +48,26 @@ const setupAirtableGet = async ({ table, view, recordId, filters }: AirtableGetO
         //url += '&filterByFormula='+(filters || []).map(filterFunc => filterFunc()).join('&')
         url += '&filterByFormula='+(filters || []).join('&');
     }
-    
-    
-    
-    console.log('url get: ', url)
+
     const response = await fetch(url);
     return response.json();
+}
+
+const setupAirtableDelete = async <T>({ table, recordId }: AirtableDeleteOptions<T>): Promise<boolean> => {
+    
+    let url = `${setup.BASE_URL}/v${setup.API_VERSION || 0}/${setup.BASE_ID}/${table}?api_key=${setup.API_KEY}`;
+    url += `&records[]=${recordId}`;
+    console.log('url del: ', url);
+    type DeletedItemResponse = { records: {
+        deleted: boolean,
+        id: T
+    }[]};
+    
+    const rawResponse = await fetch(url, { 
+        method: "DELETE"});
+    const response = await rawResponse.json();
+    const { deleted, id } = ((response as DeletedItemResponse).records || [])[0];
+    return deleted === true && id === recordId ? Promise.resolve(true) : Promise.reject(false);
 }
 
 const setupAirtablePost = async <T>({ table, payload }: AirtablePostOptions<T>) => {
@@ -65,9 +83,7 @@ const setupAirtablePost = async <T>({ table, payload }: AirtablePostOptions<T>) 
 }
 
 const setupAirtablePut = async <T>({ table, recordId, payload }: AirtablePutOptions<T>) => {
-    const url = `${setup.BASE_URL}/v${setup.API_VERSION || 0}/${setup.BASE_ID}/${table}/${recordId}?api_key=${setup.API_KEY}`;
-    console.log('url put: ', url)
-    
+    const url = `${setup.BASE_URL}/v${setup.API_VERSION || 0}/${setup.BASE_ID}/${table}${recordId ? '/'+recordId : ''}?api_key=${setup.API_KEY}`;
     const response = await fetch(url, { 
         headers: {
             "Content-Type": "application/json"
@@ -87,6 +103,11 @@ export const postToAirtable = <T>({ table, payload }: AirtablePostOptions<T>) =>
 
 export const putToAirtable = <T>({ table, recordId, payload }: AirtablePutOptions<T>) => {
     return setupAirtablePut<T>({ table, recordId, payload });
+}
+
+
+export const deleteFromAirtable = <T>({ table, recordId }: AirtableDeleteOptions<T>) => {
+    return setupAirtableDelete<T>({ table, recordId });
 }
 
 

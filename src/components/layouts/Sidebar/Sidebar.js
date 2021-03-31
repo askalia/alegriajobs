@@ -51,7 +51,6 @@ import {
   Row,
   Col
 } from "reactstrap";
-import { auth } from "shared/services/firebase-utils.service";
 import candidateAuthService from "shared/services/candidate-auth.service";
 
 var ps;
@@ -65,8 +64,8 @@ class Sidebar extends React.Component {
     this.activeRoute.bind(this);
   }
   // verifies if routeName is the one active (in browser input)
-  activeRoute(routeName) {
-    return this.props.location.pathname.indexOf(routeName) > -1 ? "active" : "";
+  activeRoute(route) {
+    return this.props.location.pathname === route.layout + route.path ? "active" : "";
   }
   // toggles collapse between opened and closed (true/false)
   toggleCollapse = () => {
@@ -89,7 +88,7 @@ class Sidebar extends React.Component {
             to={prop.layout + prop.path}
             tag={NavLinkRRD}
             onClick={this.closeCollapse}
-            activeClassName="active"
+            activeClassName={this.activeRoute(prop) ? "active" : ""}
           >
             <i className={prop.icon} />
             {prop.name}
@@ -102,9 +101,7 @@ class Sidebar extends React.Component {
   logOut = async (e) => {
     e.preventDefault();
     await candidateAuthService.logOut();
-    
-      console.log('LOGOUT');
-      this.props.history.push('/')
+    this.props.history.push('/')
     
     
   } 
@@ -141,14 +138,12 @@ class Sidebar extends React.Component {
           {/* Brand */}
           {logo ? (
             <NavbarBrand className="pt-0" {...navbarBrandProps}>
-              <img
-                alt={logo.imgAlt}
-                className="navbar-brand-img"
-                src={logo.imgSrc || ""}
-              />
+              Lowcode Jobboard
             </NavbarBrand>
           ) : null}
           {/* User */}
+          <hr className="my-3" />
+
           <Nav className="align-items-center d-md-none">
             <UncontrolledDropdown nav>
               <DropdownToggle nav className="nav-link-icon">
@@ -251,13 +246,15 @@ class Sidebar extends React.Component {
               </InputGroup>
             </Form>
             {/* Navigation */}
+            
             <Nav navbar>{this.createLinks(routes)}</Nav>
             {/* Divider */}
             <hr className="my-3" />
             {/* Heading */}
-            <h6 className="navbar-heading text-muted">Documentation</h6>
+            { false && <h6 className="navbar-heading text-muted">Documentation</h6>}
             {/* Navigation */}
-            <Nav className="mb-md-3" navbar>
+            
+            {false && <Nav className="mb-md-3" navbar>
               <NavItem>
                 <NavLink href="https://demos.creative-tim.com/argon-dashboard-react/#/documentation/overview?ref=adr-admin-sidebar">
                   <i className="ni ni-spaceship" />
@@ -276,7 +273,7 @@ class Sidebar extends React.Component {
                   Components
                 </NavLink>
               </NavItem>
-            </Nav>
+            </Nav>}
             <Nav className="mb-md-3" navbar>
               <NavItem className="active-pro active">
                 <NavLink href="https://www.creative-tim.com/product/argon-dashboard-pro-react?ref=adr-admin-sidebar">

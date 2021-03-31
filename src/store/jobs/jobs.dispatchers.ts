@@ -1,4 +1,4 @@
-import { Job } from "shared/models";
+import { BookmarkedJobs, Job } from "shared/models";
 import { jobService } from "shared/services/jobs.service";
 import { IMountJoblist, jobActions } from "./jobs.actions";
 

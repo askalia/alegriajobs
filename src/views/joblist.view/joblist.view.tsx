@@ -60,11 +60,18 @@ import { jobService } from "shared/services/jobs.service";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 
 import { jobListSelectors } from "../../store/jobs/jobs.selectors";
-import { ICandidateState } from "store/candidate/candidate.reducer.js";
+import { candidaturesSelectors } from "../../store/candidatures/candidatures.selectors";
 import { ICandidaturesStore } from "store/candidatures/candidatures.reducer.js";
 
 type IJobListViewProps = {
   bookmarkedJobsOnly?: boolean;
+} & IMapStateToJoblistViewProps &
+  IJoblistDispatchers &
+  ICandidaturesDispatchers &  
+  RouteComponentProps;
+
+type IJobListViewDefaultProps = {
+  bookmarkedJobsOnly: false;
 };
 
 interface IJobListViewState {
@@ -83,7 +90,11 @@ class JobListView extends React.Component<
 > {
   private unsubscribeRouteHistory: () => void = () => {};
 
-  constructor(props: IJobListViewProps = { bookmarkedJobsOnly: false }) {
+  public static defaultProps: IJobListViewDefaultProps = {
+    bookmarkedJobsOnly: false,
+  };
+
+  constructor(props: IJobListViewProps) {
     super(props);
 
     this.state = {
@@ -93,7 +104,7 @@ class JobListView extends React.Component<
         direction: "asc",
         sortBy: "posted_at",
       },
-      jobList: (this.props as IMapStateToJoblistViewProps).jobList,
+      jobList: this.props.jobList,
     } as IJobListViewState;
   }
 
@@ -109,14 +120,13 @@ class JobListView extends React.Component<
 
   async componentDidMount() {
     console.log("componentDidMount");
-    const { listJobs, listCandidateBookmarkedJobs, refreshCandidatures } = this
-      .props as IJoblistDispatchers & {
-      refreshCandidatures: (candidateId: string) => Promise<void>;
-    };
+    const {
+      listJobs,
+      listCandidateBookmarkedJobs,
+      refreshCandidatures,
+    } = this.props;
 
-    await listJobs?.();
-    await listCandidateBookmarkedJobs?.(candidateService.getCandidateId());
-    await refreshCandidatures?.(candidateService.getCandidateId());
+    
 
     const router = this.props as RouteComponentProps;
 
@@ -126,7 +136,6 @@ class JobListView extends React.Component<
     });
     const jobId = (this.props as RouteComponentProps<{ jobId?: string }>).match
       .params.jobId;
-    console.log("jobId: here ", jobId);
     this.activateJobDetailView(jobId);
   }
 
@@ -138,10 +147,7 @@ class JobListView extends React.Component<
     if (jobId === undefined) {
       return;
     }
-    const foundJob = (this.props as IMapStateToJoblistViewProps).jobList.find(
-      (job) => job.id === jobId
-    );
-    console.log("foundJob : ", foundJob);
+    const foundJob = this.props.jobList.find((job) => job.id === jobId);
 
     foundJob !== undefined &&
       this.setState(
@@ -155,13 +161,14 @@ class JobListView extends React.Component<
   }
 
   isBookmarkedJob = (jobId: string) => {
-    return (
-      (this.props as IMapStateToJoblistViewProps)?.candidateBookmarkedJobs || []
-    ).includes(jobId);
+    return (this.props?.candidateBookmarkedJobs?.fields.jobs || []).includes(
+      jobId
+    );
   };
 
-  bookmarkJob = (jobId: string) => {
-    (this.props as IJoblistDispatchers).toggleCandidateBookmarkJob(jobId);
+  bookmarkJob = (jobId: string, e: MouseEvent) => {
+    e.preventDefault();
+    this.props.toggleCandidateBookmarkJob(jobId);
   };
 
   setCurrentJob = (job: Job, event: MouseEvent) => {
@@ -319,9 +326,10 @@ class JobListView extends React.Component<
   };
 
   canApplyJob = (job: Job) => {
-    return jobService.canApplyJob(job, (this
-      .props as IMapStateToJoblistViewProps).jobsApplied);
-    
+    return jobService.canApplyJob(
+      job,
+      this.props.jobsApplied
+    );
   };
 
   render() {
@@ -381,10 +389,6 @@ class JobListView extends React.Component<
                       </th>
                       <th scope="col">Skills</th>
                       <th scope="col">
-                        Status
-                        {this.sortButton({ sortBy: "status" })}
-                      </th>
-                      <th scope="col">
                         Company
                         {this.sortButton({ sortBy: "employer" })}
                       </th>
@@ -410,7 +414,7 @@ class JobListView extends React.Component<
                         <td className="bookmarkJob">
                           <span
                             className="btn-inner--icon favorite-button"
-                            onClick={(e) => this.bookmarkJob(job.id)}
+                            onClick={(e) => this.bookmarkJob(job.id, e)}
                           >
                             <i
                               className={`ni ni-favourite-28 ${
@@ -444,8 +448,7 @@ class JobListView extends React.Component<
                               </Badge>
                             )
                           )}
-                        </td>
-                        <td>{job.fields.status}</td>
+                        </td>                        
                         <td>{job.fields.employer?.name}</td>
                         <td>{job.fields.location}</td>
                         <td>{job.fields.posted_at}</td>
@@ -465,15 +468,15 @@ class JobListView extends React.Component<
 type IMapStateToJoblistViewProps = {
   jobList: IJobsStore["jobList"];
   candidateBookmarkedJobs: IJobsStore["candidateBookmarkedJobs"];
-  jobsApplied: ICandidaturesStore;
+  jobsApplied: ICandidaturesStore["candidatures"];
 };
 
 const mapStateToJoblistViewProps = (
   state: IRootStore
 ): IMapStateToJoblistViewProps => ({
   jobList: jobListSelectors.getJobsPublished(state),
-  candidateBookmarkedJobs: state.jobs.candidateBookmarkedJobs,
-  jobsApplied: state.candidatures,
+  candidateBookmarkedJobs: jobListSelectors.getBookmarkedJobs(state),
+  jobsApplied: candidaturesSelectors.getCandidatures(state),
 });
 
 const combineMapDispatchToProps = (dispatch: any) => ({

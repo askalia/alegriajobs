@@ -38,13 +38,9 @@ import candidateAuthService from "shared/services/candidate-auth.service";
 
 class AdminNavbar extends React.Component {
 
-  logOut = async (e) => {
+  logOut = (e) => {
     e.preventDefault();
-    await candidateAuthService.logOut();
-    console.log('LOGOUT')
-      this.props.history.push('/')
-    
-    
+    candidateAuthService.logOut()
   } 
 
   render() {

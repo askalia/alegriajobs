@@ -1,6 +1,6 @@
 //import { v2 as cloudinary } from "cloudinary" // cloudinary = require('cloudinary').v2;
-import { Candidature, Job } from "shared/models";
-import { getFromAirtable, postToAirtable } from "./airtable.service";
+import { Candidature, Job, User } from "shared/models";
+import { deleteFromAirtable, getFromAirtable, postToAirtable, putToAirtable } from "./airtable.service";
 import { fileUploadService } from "./file-upload.service";
 import turndownService from "turndown";
 import shortid from "shortid";
@@ -37,6 +37,13 @@ const applyJob = async ({ job, candidateId, resume, coverLetter} : IApplyJob): P
     return Promise.reject();
 }
 
+const unapplyJob = async (candidatureId: Candidature["id"]): Promise<boolean> => {    
+  return deleteFromAirtable<Candidature["id"]>({
+    table: "candidatures",
+    recordId: candidatureId
+  })  
+}
+
 
 const listCandidatures = async (
   candidateId: string
@@ -52,5 +59,6 @@ const listCandidatures = async (
   
 export const candidatureService = {
     applyJob,
+    unapplyJob,
     listCandidatures
 }

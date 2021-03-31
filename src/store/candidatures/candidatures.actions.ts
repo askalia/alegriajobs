@@ -2,6 +2,7 @@ import { Candidature } from "shared/models";
 
 export enum CandidaturesActionsType {
     APPLY_JOB = "APPLY_JOB",
+    UNAPPLY_JOB = "UNAPPLY_JOB",
     MOUNT_CANDIDATURES = "MOUNT_CANDIDATURES",
     REFRESH_CANDIDATURES = "REFRESH_CANDIDATURES"
 }
@@ -10,6 +11,11 @@ export enum CandidaturesActionsType {
 const applyJob = (candidatureCreated: Candidature) => ({
     type: CandidaturesActionsType.APPLY_JOB,
     payload: candidatureCreated
+});
+
+const unapplyJob = (candidatureDeletedId: Candidature['id']) => ({
+    type: CandidaturesActionsType.UNAPPLY_JOB,
+    payload: candidatureDeletedId
 });
 
 const mountCandidatures = (candidatures: Candidature[]) => ({
@@ -24,6 +30,7 @@ const refreshCandidatures = (candidatures: Candidature[]) => ({
 
 export const candidaturesActions = {
     applyJob,
+    unapplyJob,
     mountCandidatures,
     refreshCandidatures,
 }

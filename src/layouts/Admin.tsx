@@ -38,18 +38,51 @@ import {
   mapUserDispatchToProps,
 } from "../store/user/user.actions";
 
-import routes from "routes.js";
 import { IRootStore } from "store/root-reducer";
 import { connect } from "react-redux";
+import {
+  IJoblistDispatchers,
+  JoblistDispatchers,
+} from "store/jobs/jobs.dispatchers";
+import {
+  CandidaturesDispatchers,
+  ICandidaturesDispatchers,
+} from "store/candidatures/candidatures.dispatchers";
+import candidateAuthService from "shared/services/candidate-auth.service";
+
+import routes from "./admin.routes";
 
 class Admin extends React.Component<
-  RouteComponentProps & IUserMapDispatchToProps
+  RouteComponentProps &
+    IUserMapDispatchToProps &
+    IJoblistDispatchers &
+    ICandidaturesDispatchers
 > {
+  async componentDidMount() {
+    await this.fetchData();
+  }
   componentDidUpdate() {
     document.documentElement.scrollTop = 0;
     document?.scrollingElement && (document.scrollingElement.scrollTop = 0);
     //this.refs.mainContent.scrollTop = 0;
   }
+
+  async fetchData() {
+    const {
+      listJobs,
+      listCandidateBookmarkedJobs,
+      refreshCandidatures,
+    } = this.props;
+
+    await listJobs?.();
+    await listCandidateBookmarkedJobs?.(
+      candidateAuthService.getCandidate().id as string
+    );
+    await refreshCandidatures?.(
+      candidateAuthService.getCandidate().id as string
+    );
+  }
+
   getRoutes = (routes: any[]) => {
     return routes.map((prop, key) => {
       if (prop?.layout === "/admin" || prop?.layout === "/candidate") {
@@ -80,15 +113,31 @@ class Admin extends React.Component<
     return "Brand";
   };
 
+  getRoutesLinks = () => {
+    const displayableRoutes: string[] = [
+      "/jobs",
+      "/jobs/applied",
+      "/jobs/bookmarked",
+      "/user-profile",
+    ];
+    const filtered = routes.filter((rt) => displayableRoutes.includes(rt.path));
+    return filtered.sort((current, next) => {
+      return (
+        displayableRoutes.indexOf(current.path) -
+        displayableRoutes.indexOf(next.path)
+      );
+    });
+  };
+
   render() {
     return (
       <>
         <Sidebar
           {...this.props}
-          routes={routes}
+          routes={this.getRoutesLinks()}
           logo={{
             innerLink: "/candidate/jobs",
-            imgSrc: require("assets/img/brand/argon-react.png"),
+            imgSrc: require("assets/img/brand/argon-react.png").default,
             imgAlt: "...",
           }}
         />
@@ -117,7 +166,12 @@ const mapStateToProps = (store: IRootStore): IUserMapStateToProps => ({
   currentUser: store.user.currentUser,
 });
 
+const combineMapDispatchToProps = (dispatch: any) => ({
+  ...JoblistDispatchers(dispatch),
+  ...CandidaturesDispatchers(dispatch),
+});
+
 export default connect(
   mapStateToProps,
-  mapUserDispatchToProps
+  combineMapDispatchToProps
 )(withRouter(Admin));

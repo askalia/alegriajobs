@@ -1,4 +1,4 @@
-import { Job } from "shared/models";
+import { BookmarkedJobs, Job } from "shared/models";
 
 export enum JobsActionTypes {
     SET_JOBLIST = "SET_JOBLIST",
@@ -22,7 +22,7 @@ export const toggleCandidateBookmarkJob = (jobId: Job['id']) => ({
     payload: jobId
 });
 
-export const mountCandidateBookmarkedJobs = (bookmarkedJobs: Job["id"][]) => ({
+export const mountCandidateBookmarkedJobs = (bookmarkedJobs: BookmarkedJobs) => ({
     type: JobsActionTypes.MOUNT_CANDIDATE_BOOKMARKED_JOBS,
     payload: bookmarkedJobs
 });

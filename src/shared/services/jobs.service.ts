@@ -1,17 +1,20 @@
 import { getFromAirtable } from "./airtable.service";
 import { HardSkillService } from "./hardskills.service";
 import { EmployerService } from "./employer.service";
-import { AirtablePayload, Candidature, Employer, HardSkill, Job, Status } from "../models";
+import { AirtablePayload, Candidature, Employer, HardSkill, Job, Status, BookmarkedJobs } from "../models";
+
 
 
 const listJobs = async (): Promise<Job[]> => {
+  console.log('GET ALL JOBS')
+
   const refListHardSkills: HardSkill[] = await HardSkillService.listHardSkills();
   const refListEmployers: Employer[] = await EmployerService.listEmployers();
   const jobsPayload: AirtablePayload<Job> = await getFromAirtable({
     table: "jobs",
     view: "jobs_published"    
   });
-
+  
   return jobsPayload.records.map(({ id, fields, ...rest }: Job) => ({
     id,
     fields: {
@@ -30,31 +33,21 @@ const listJobs = async (): Promise<Job[]> => {
 };
 
 type BookmarkedJobsPayload = {
-  fields: {
-    bookmarked_jobs: Job["id"][];
-  };
+  records: BookmarkedJobs[];
 };
 
-type BookmarkedJobRecord = {
-  fields: {
-    jobs: Job["id"][];
-  };
-};
 
 
 
 const listCandidateBookmarkedJobs = async (
   candidateId: string
-): Promise<Job["id"][]> => {
-  const payload: BookmarkedJobsPayload = await getFromAirtable({
-    table: "candidates",
-    recordId: candidateId,
-  });
-  const bookmarkedJobRecord: BookmarkedJobRecord = await getFromAirtable({
+): Promise<BookmarkedJobs> => {
+  const bookmarkedJobRecord: BookmarkedJobsPayload = await getFromAirtable({
     table: "bookmarked_jobs",
-    recordId: (payload?.fields?.bookmarked_jobs || [])[0],
-  });
-  return bookmarkedJobRecord.fields.jobs;
+    view: "bookmarked_jobs",
+    filters: [`(candidate="${candidateId}")`]    
+  });  
+  return (bookmarkedJobRecord?.records || [])[0];  
 };
 
 

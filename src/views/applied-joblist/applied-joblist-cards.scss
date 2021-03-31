@@ -9,6 +9,20 @@
 
   .card {
     box-shadow: 0 0 2rem 0 rgba(136, 152, 170, 0.15) !important;
-    margin-bottom: 2em;
+    margin: 2em;
+
+    & .card-body p {
+      height: 200px;
+    }
+
+    & .candidature-actions {
+      display: flex;
+      flex-wrap: wrap;
+      text-align: center;
+
+      a:first-child {
+        flex: 50%;
+      }
+    }
   }
 }
