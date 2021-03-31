@@ -1,18 +1,18 @@
 {
   "files": {
     "main.css": "/react-airtable-jobboard/static/css/main.6f84dcb6.chunk.css",
-    "main.js": "/react-airtable-jobboard/static/js/main.90f86647.chunk.js",
-    "main.js.map": "/react-airtable-jobboard/static/js/main.90f86647.chunk.js.map",
-    "runtime-main.js": "/react-airtable-jobboard/static/js/runtime-main.15ebed5f.js",
-    "runtime-main.js.map": "/react-airtable-jobboard/static/js/runtime-main.15ebed5f.js.map",
+    "main.js": "/react-airtable-jobboard/static/js/main.032d742c.chunk.js",
+    "main.js.map": "/react-airtable-jobboard/static/js/main.032d742c.chunk.js.map",
+    "runtime-main.js": "/react-airtable-jobboard/static/js/runtime-main.227337a3.js",
+    "runtime-main.js.map": "/react-airtable-jobboard/static/js/runtime-main.227337a3.js.map",
     "static/css/2.d9f17184.chunk.css": "/react-airtable-jobboard/static/css/2.d9f17184.chunk.css",
-    "static/js/2.1b1781cc.chunk.js": "/react-airtable-jobboard/static/js/2.1b1781cc.chunk.js",
-    "static/js/2.1b1781cc.chunk.js.map": "/react-airtable-jobboard/static/js/2.1b1781cc.chunk.js.map",
+    "static/js/2.34facbf2.chunk.js": "/react-airtable-jobboard/static/js/2.34facbf2.chunk.js",
+    "static/js/2.34facbf2.chunk.js.map": "/react-airtable-jobboard/static/js/2.34facbf2.chunk.js.map",
     "index.html": "/react-airtable-jobboard/index.html",
     "static/css/2.d9f17184.chunk.css.map": "/react-airtable-jobboard/static/css/2.d9f17184.chunk.css.map",
     "static/css/main.6f84dcb6.chunk.css.map": "/react-airtable-jobboard/static/css/main.6f84dcb6.chunk.css.map",
-    "static/js/2.1b1781cc.chunk.js.LICENSE.txt": "/react-airtable-jobboard/static/js/2.1b1781cc.chunk.js.LICENSE.txt",
-    "static/js/main.90f86647.chunk.js.LICENSE.txt": "/react-airtable-jobboard/static/js/main.90f86647.chunk.js.LICENSE.txt",
+    "static/js/2.34facbf2.chunk.js.LICENSE.txt": "/react-airtable-jobboard/static/js/2.34facbf2.chunk.js.LICENSE.txt",
+    "static/js/main.032d742c.chunk.js.LICENSE.txt": "/react-airtable-jobboard/static/js/main.032d742c.chunk.js.LICENSE.txt",
     "static/media/argon-react.png": "/react-airtable-jobboard/static/media/argon-react.128d71d3.png",
     "static/media/all.min.css": "/react-airtable-jobboard/static/media/fa-solid-900.f4f93856.woff",
     "static/media/iot.jpg": "/react-airtable-jobboard/static/media/iot.92d59862.jpg",
@@ -26,10 +26,10 @@
     "static/media/web.jpg": "/react-airtable-jobboard/static/media/web.b171a431.jpg"
   },
   "entrypoints": [
-    "static/js/runtime-main.15ebed5f.js",
+    "static/js/runtime-main.227337a3.js",
     "static/css/2.d9f17184.chunk.css",
-    "static/js/2.1b1781cc.chunk.js",
+    "static/js/2.34facbf2.chunk.js",
     "static/css/main.6f84dcb6.chunk.css",
-    "static/js/main.90f86647.chunk.js"
+    "static/js/main.032d742c.chunk.js"
   ]
 }
