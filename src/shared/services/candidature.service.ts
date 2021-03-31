@@ -1,6 +1,6 @@
 //import { v2 as cloudinary } from "cloudinary" // cloudinary = require('cloudinary').v2;
-import { Candidature, Job, User } from "shared/models";
-import { deleteFromAirtable, getFromAirtable, postToAirtable, putToAirtable } from "./airtable.service";
+import { Candidature, Job } from "shared/models";
+import { deleteFromAirtable, getFromAirtable, postToAirtable } from "./airtable.service";
 import { fileUploadService } from "./file-upload.service";
 import turndownService from "turndown";
 import shortid from "shortid";

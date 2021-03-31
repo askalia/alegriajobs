@@ -18,8 +18,7 @@ import { candidateService } from "shared/services/candidate.service";
 import { Link, RouteComponentProps, withRouter } from "react-router-dom";
 
 type ISignupProps = {} & RouteComponentProps;
-
-type IRegisterViewState = {
+interface IRegisterViewState {
   name: string;
   email: string;
   password: string;
@@ -34,10 +33,10 @@ const initialState = {
 };
 
 const Signup: FC<ISignupProps> = (props) => {
-  const [name, setName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [name, setName] = useState<IRegisterViewState["name"]>(initialState.name);
+  const [email, setEmail] = useState<IRegisterViewState["email"]>(initialState.email);
+  const [password, setPassword] = useState<IRegisterViewState["password"]>(initialState.password);
+  const [confirmPassword, setConfirmPassword] = useState<IRegisterViewState["confirmPassword"]>(initialState.confirmPassword);
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

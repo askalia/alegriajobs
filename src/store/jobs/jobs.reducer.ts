@@ -1,8 +1,7 @@
 import { putToAirtable } from "shared/services/airtable.service";
 import candidateAuthService from "shared/services/candidate-auth.service";
-import { jobService } from "shared/services/jobs.service";
-import { BookmarkedJobs, Job, User } from "../../shared/models"
-import {  jobActions, JobsActionTypes, mountJoblist, toggleCandidateBookmarkJob } from "./jobs.actions"
+import { BookmarkedJobs, Job } from "../../shared/models"
+import { JobsActionTypes } from "./jobs.actions"
 
 export interface IJobsStore {
     jobList: Job[];
@@ -13,22 +12,6 @@ const initialJoblistStore: IJobsStore = {
     jobList: [],
     candidateBookmarkedJobs: null
 }
-
-
-
-function reducerBuilder<S, A>(store: S) {    
-    var reducersMap = new Map<A, Function>();        
-    const api = {
-        set: (actionType: A, reducerFunction: Function) => {
-            reducersMap.set(actionType, reducerFunction);
-            return api;
-        },
-        run: (actionType: A, payload: unknown) => reducersMap.has(actionType) ? reducersMap.get(actionType)?.(store, payload) : store
-    }
-    return api;
-    
-}
-
 
 export const jobsReducer = (
     store: IJobsStore = initialJoblistStore,
@@ -44,14 +27,7 @@ export const jobsReducer = (
             return mountCandidatureBookmarkedJobs(store, action.payload as BookmarkedJobs);
         default:
             return store;
-    }
-    
-    /*return reducerBuilder<IJobsStore, JobsActionTypes>(store)
-    .set(JobsActionTypes.SET_JOBLIST, setJobList)
-    .set(JobsActionTypes.TOGGLE_BOOKMARK_JOB, toogleBookmarkJob)
-    .set(JobsActionTypes.MOUNT_CANDIDATE_BOOKMARKED_JOBS, mountCandidatureBookmarkedJobs)
-    .run(action.type, action.payload)
-    */
+    }    
 }
 
 
@@ -79,12 +55,10 @@ const toogleBookmarkJob = (store: IJobsStore, jobId: string) => {
                 jobs: [jobId]
             }
         } as BookmarkedJobs
-    }
-    console.log('STATE OF : ', store.candidateBookmarkedJobs)
+    }    
     let newStore = null;
     // is inside : remove
     if ((store.candidateBookmarkedJobs?.fields?.jobs || []).includes(jobId)) {
-        console.log('contains job')
         const newBookmarkedJobs = {
             ...store.candidateBookmarkedJobs
         }
@@ -95,8 +69,7 @@ const toogleBookmarkJob = (store: IJobsStore, jobId: string) => {
         newStore = {
             ...store,
             candidateBookmarkedJobs : newBookmarkedJobs,
-        };
-        console.log('STATE OF AFTER: ', store.candidateBookmarkedJobs)
+        };        
     }
     // no exist : add
     else {        
@@ -108,17 +81,9 @@ const toogleBookmarkJob = (store: IJobsStore, jobId: string) => {
             jobId
         ];        
     }   
-    console.log('store is now : ', newStore)
     const bookmarkedJobToSend = { ...newStore.candidateBookmarkedJobs };
     delete bookmarkedJobToSend.createdTime;    
-    console.log('PATcH : ', {
-        table:"bookmarked_jobs",
-        payload: {
-            records: [
-                bookmarkedJobToSend
-            ]
-        }
-    })
+    
     putToAirtable<{ records: BookmarkedJobs[]}>({
         table:"bookmarked_jobs",
         payload: {

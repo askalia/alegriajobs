@@ -1,6 +1,6 @@
 import Markdown from "markdown-to-jsx";
 import React, { FC } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 // reactstrap components
 import {
   Button,
@@ -35,7 +35,7 @@ export const AppliedJoblistCards: FC<IAppliedJoblistCardsProps> = ({
           const job = findJobById(candidature.fields.job[0] as string);
           return (
             <li key={shortid.generate()}>
-              <Card style={{ width: "20rem" }} key={`jobcard-${job?.id}`}>
+              <Card className="card-job" style={{ width: "20rem" }} key={`jobcard-${job?.id}`}>
                 <CardImg
                   alt="..."
                   src={

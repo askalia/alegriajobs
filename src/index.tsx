@@ -10,7 +10,7 @@ import "assets/scss/argon-dashboard-react.scss";
 import AdminLayout from "./layouts/Admin";
 import AuthLayout from "./layouts/Auth";
 import store from "./store/store";
-import GuardRoute from "./components/private-route";
+import GuardRoute from "./components/guard-route";
 import { AuthProvider } from "./contexts/AuthContext";
 
 ReactDOM.render(

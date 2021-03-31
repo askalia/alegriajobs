@@ -23,7 +23,6 @@ import {
 import "./applied-joblist.view.component.scss"
 import { jobListSelectors } from "store/jobs/jobs.selectors";
 import { candidaturesSelectors } from "store/candidatures/candidatures.selectors";
-import { candidatureService } from "shared/services/candidature.service";
 
 interface IAppliedJobListViewState {
   displayAs: "CARDS" | "TABLE";
