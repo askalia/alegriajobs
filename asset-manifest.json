@@ -1,0 +1,35 @@
+{
+  "files": {
+    "main.css": "/react-airtable-jobboard/static/css/main.6f84dcb6.chunk.css",
+    "main.js": "/react-airtable-jobboard/static/js/main.90f86647.chunk.js",
+    "main.js.map": "/react-airtable-jobboard/static/js/main.90f86647.chunk.js.map",
+    "runtime-main.js": "/react-airtable-jobboard/static/js/runtime-main.15ebed5f.js",
+    "runtime-main.js.map": "/react-airtable-jobboard/static/js/runtime-main.15ebed5f.js.map",
+    "static/css/2.d9f17184.chunk.css": "/react-airtable-jobboard/static/css/2.d9f17184.chunk.css",
+    "static/js/2.1b1781cc.chunk.js": "/react-airtable-jobboard/static/js/2.1b1781cc.chunk.js",
+    "static/js/2.1b1781cc.chunk.js.map": "/react-airtable-jobboard/static/js/2.1b1781cc.chunk.js.map",
+    "index.html": "/react-airtable-jobboard/index.html",
+    "static/css/2.d9f17184.chunk.css.map": "/react-airtable-jobboard/static/css/2.d9f17184.chunk.css.map",
+    "static/css/main.6f84dcb6.chunk.css.map": "/react-airtable-jobboard/static/css/main.6f84dcb6.chunk.css.map",
+    "static/js/2.1b1781cc.chunk.js.LICENSE.txt": "/react-airtable-jobboard/static/js/2.1b1781cc.chunk.js.LICENSE.txt",
+    "static/js/main.90f86647.chunk.js.LICENSE.txt": "/react-airtable-jobboard/static/js/main.90f86647.chunk.js.LICENSE.txt",
+    "static/media/argon-react.png": "/react-airtable-jobboard/static/media/argon-react.128d71d3.png",
+    "static/media/all.min.css": "/react-airtable-jobboard/static/media/fa-solid-900.f4f93856.woff",
+    "static/media/iot.jpg": "/react-airtable-jobboard/static/media/iot.92d59862.jpg",
+    "static/media/istockphoto-1054956016-612x612 (1).jpg": "/react-airtable-jobboard/static/media/istockphoto-1054956016-612x612 (1).e492dd20.jpg",
+    "static/media/motion.jpg": "/react-airtable-jobboard/static/media/motion.e492dd20.jpg",
+    "static/media/nucleo.css": "/react-airtable-jobboard/static/media/nucleo-icons.d6a66724.ttf",
+    "static/media/product.jpg": "/react-airtable-jobboard/static/media/product.d0e2a72b.jpg",
+    "static/media/profile-cover.jpg": "/react-airtable-jobboard/static/media/profile-cover.97899245.jpg",
+    "static/media/team-1-800x800.jpg": "/react-airtable-jobboard/static/media/team-1-800x800.fa5a7ac2.jpg",
+    "static/media/ux.jpg": "/react-airtable-jobboard/static/media/ux.712d07c8.jpg",
+    "static/media/web.jpg": "/react-airtable-jobboard/static/media/web.b171a431.jpg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.15ebed5f.js",
+    "static/css/2.d9f17184.chunk.css",
+    "static/js/2.1b1781cc.chunk.js",
+    "static/css/main.6f84dcb6.chunk.css",
+    "static/js/main.90f86647.chunk.js"
+  ]
+}
