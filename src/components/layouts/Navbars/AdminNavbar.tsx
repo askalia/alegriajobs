@@ -16,7 +16,7 @@
 
 */
 import React from "react";
-import { Link, withRouter } from "react-router-dom";
+import { Link } from "react-router-dom";
 // reactstrap components
 import {
   DropdownMenu,
@@ -32,16 +32,23 @@ import {
   Navbar,
   Nav,
   Container,
-  Media
+  Media,
 } from "reactstrap";
+import { Candidate } from "shared/models";
 import candidateAuthService from "shared/services/candidate-auth.service";
 
-class AdminNavbar extends React.Component {
+import "./AdminNavBar.scss"
 
-  logOut = (e) => {
+type IAdminNavbarProps = {
+  brandText?: string;
+  candidate: Candidate;
+};
+
+class AdminNavbar extends React.Component<IAdminNavbarProps, any> {
+  logOut = (e: MouseEvent) => {
     e.preventDefault();
-    candidateAuthService.logOut()
-  } 
+    candidateAuthService.logOut();
+  };
 
   render() {
     return (
@@ -49,10 +56,10 @@ class AdminNavbar extends React.Component {
         <Navbar className="navbar-top navbar-dark" expand="md" id="navbar-main">
           <Container fluid>
             <Link
-              className="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block"
+              className="h3 mb-0 text-white d-none d-lg-inline-block"
               to="/"
             >
-              {this.props.brandText}
+              {this.props?.brandText || ""}
             </Link>
             <Form className="navbar-search navbar-search-dark form-inline mr-3 d-none d-md-flex ml-lg-auto">
               <FormGroup className="mb-0">
@@ -73,12 +80,18 @@ class AdminNavbar extends React.Component {
                     <span className="avatar avatar-sm rounded-circle">
                       <img
                         alt="..."
-                        src={require("assets/img/theme/team-4-800x800.jpg").default}
+                        src={
+                          require("assets/img/theme/avatar-male.jpg").default
+                        }
                       />
                     </span>
                     <Media className="ml-2 d-none d-lg-block">
                       <span className="mb-0 text-sm font-weight-bold">
-                        Jessica Jones
+                        Hello,{" "}
+                        {(this.props.candidate?.fields?.fullname || "").length >
+                        0
+                          ? this.props.candidate?.fields?.fullname
+                          : this.props.candidate?.fields?.email}
                       </span>
                     </Media>
                   </Media>
@@ -118,4 +131,4 @@ class AdminNavbar extends React.Component {
   }
 }
 
-export default withRouter(AdminNavbar);
+export default AdminNavbar;

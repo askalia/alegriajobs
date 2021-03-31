@@ -1,21 +1,4 @@
-/*!
-
-=========================================================
-* Argon Dashboard React - v1.1.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-react
-* Copyright 2019 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-import { FC, FormEvent, useEffect, useState } from "react";
+import { FC, FormEvent, useState } from "react";
 import { connect } from "react-redux";
 import { Link, RouteComponentProps, withRouter } from "react-router-dom";
 import candidateAuthService from "../../shared/services/candidate-auth.service";
@@ -33,6 +16,7 @@ import {
   InputGroup,
   Row,
   Col,
+  CardHeader,
 } from "reactstrap";
 import {
   mapUserDispatchToProps,
@@ -81,10 +65,10 @@ const Signin: FC<ISigninPageProps> = (props: ISigninPageProps) => {
     <>
       <Col lg="5" md="7">
         <Card className="bg-secondary shadow border-0">
+        <CardHeader className="bg-transparent pb-5 text-center">
+            <h2>Login as a Candidate</h2>
+          </CardHeader>
           <CardBody className="px-lg-5 py-lg-5">
-            <div className="text-center text-muted mb-4">
-              <small>Sign in with credentials</small>
-            </div>
             <Form role="form" onSubmit={handleSubmit}>
               <FormGroup className="mb-3">
                 <InputGroup className="input-group-alternative">

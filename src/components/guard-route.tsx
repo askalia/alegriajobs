@@ -1,5 +1,5 @@
-import { Component } from "react";
-import { Route, Redirect } from "react-router-dom";
+import { Route } from "react-router-dom";
+import candidateAuthService from "shared/services/candidate-auth.service";
 import { useAuth } from "../contexts/AuthContext";
 
 export default function GuardRoute({
@@ -8,12 +8,11 @@ export default function GuardRoute({
   ...rest
 }: any) {
   const { currentUser } = useAuth();
-
   return (
     <Route
       render={(props) => {
         return currentUser ? (
-          <AdminLayout {...props} />
+          <AdminLayout {...props} candidate={candidateAuthService.getCandidate()} />
         ) : (
           <AuthLayout {...props} />
         );

@@ -1,20 +1,3 @@
-/*!
-
-=========================================================
-* Argon Dashboard React - v1.1.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-react
-* Copyright 2019 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React from "react";
 import {
   Route,
@@ -26,16 +9,14 @@ import {
 // reactstrap components
 import { Container } from "reactstrap";
 // core components
-import AdminNavbar from "components/layouts/Navbars/AdminNavbar.js";
+import AdminNavbar from "components/layouts/Navbars/AdminNavbar";
 import AdminFooter from "components/layouts/Footers/AdminFooter.js";
 import Sidebar from "components/layouts/Sidebar/Sidebar.js";
 import {
-  FirebaseUnsubscribe,
   FirebaseUser,
 } from "../shared/services/firebase-utils.service";
 import {
-  IUserMapDispatchToProps,
-  mapUserDispatchToProps,
+  IUserMapDispatchToProps,  
 } from "../store/user/user.actions";
 
 import { IRootStore } from "store/root-reducer";
@@ -51,13 +32,15 @@ import {
 import candidateAuthService from "shared/services/candidate-auth.service";
 
 import routes from "./admin.routes";
+import { Candidate } from "shared/models";
 
-class Admin extends React.Component<
-  RouteComponentProps &
-    IUserMapDispatchToProps &
-    IJoblistDispatchers &
-    ICandidaturesDispatchers
-> {
+type IAdminProps = { candidate: Candidate }
+& RouteComponentProps &
+IUserMapDispatchToProps &
+IJoblistDispatchers &
+ICandidaturesDispatchers;
+
+class Admin extends React.Component<IAdminProps> {
   async componentDidMount() {
     await this.fetchData();
   }
@@ -101,16 +84,8 @@ class Admin extends React.Component<
   };
 
   getBrandText = (path?: string) => {
-    for (let i = 0; i < routes.length; i++) {
-      if (
-        this.props.location.pathname.indexOf(
-          routes[i].layout + routes[i].path
-        ) !== -1
-      ) {
-        return routes[i].name;
-      }
-    }
-    return "Brand";
+    const currentRoute = routes.find(r => r.layout + r.path === this.props.location.pathname);
+    return (currentRoute?.name || "")    
   };
 
   getRoutesLinks = () => {
@@ -144,6 +119,7 @@ class Admin extends React.Component<
         <div className="main-content">
           <AdminNavbar
             {...this.props}
+            candidate={this.props.candidate}
             brandText={this.getBrandText(this.props.location.pathname)}
           />
           <Switch>
