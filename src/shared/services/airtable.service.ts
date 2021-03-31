@@ -10,15 +10,25 @@ type AirtableSetup = {
 
 type AirtableGetOptions = {
     table: TableName,
+    view?: string,
     recordId?: string,
-    filters?: (() => string)[]
-        
+    filters?: string[]        
 }
 
-type AirtablePostPutOptions<T> = {
+type AirtableDeleteOptions<T> = {
+    table: TableName,
+    recordId: T;
+}
+
+type AirtablePostOptions<T> = {
+    table: TableName,
+    payload: T | Object
+}
+
+type AirtablePutOptions<T> = {
     table: TableName,
     recordId?: string
-    payload: T | Object
+    payload: T | Object;
 }
 
 const setup: AirtableSetup = { 
@@ -29,21 +39,40 @@ const setup: AirtableSetup = {
 };
 
 
-const setupAirtableGet = async ({ table, recordId, filters }: AirtableGetOptions) => {
+const setupAirtableGet = async ({ table, view, recordId, filters }: AirtableGetOptions) => {
     let url = `${setup.BASE_URL}/v${setup.API_VERSION || 0}/${setup.BASE_ID}/${table}${recordId ? `/${recordId}` : ''}?api_key=${setup.API_KEY}`;
-    if (filters){
-        url += '&filterByFormula='+(filters || []).map(filterFunc => filterFunc()).join('&')
+    if (view){
+        url += `&view=${view}`
     }
-    
-    console.log('url get: ', url)
+    if (filters){
+        //url += '&filterByFormula='+(filters || []).map(filterFunc => filterFunc()).join('&')
+        url += '&filterByFormula='+(filters || []).join('&');
+    }
+
     const response = await fetch(url);
     return response.json();
 }
 
-const setupAirtablePostPut = async <T>({ table, recordId, payload }: AirtablePostPutOptions<T>) => {
-    const url = `${setup.BASE_URL}/v${setup.API_VERSION || 0}/${setup.BASE_ID}/${table}${recordId ? `/${recordId}` : ''}?api_key=${setup.API_KEY}`;
-    console.log('url post/put: ', url)
-    console.log('POST : ', payload)
+const setupAirtableDelete = async <T>({ table, recordId }: AirtableDeleteOptions<T>): Promise<boolean> => {
+    
+    let url = `${setup.BASE_URL}/v${setup.API_VERSION || 0}/${setup.BASE_ID}/${table}?api_key=${setup.API_KEY}`;
+    url += `&records[]=${recordId}`;
+    console.log('url del: ', url);
+    type DeletedItemResponse = { records: {
+        deleted: boolean,
+        id: T
+    }[]};
+    
+    const rawResponse = await fetch(url, { 
+        method: "DELETE"});
+    const response = await rawResponse.json();
+    const { deleted, id } = ((response as DeletedItemResponse).records || [])[0];
+    return deleted === true && id === recordId ? Promise.resolve(true) : Promise.reject(false);
+}
+
+const setupAirtablePost = async <T>({ table, payload }: AirtablePostOptions<T>) => {
+    const url = `${setup.BASE_URL}/v${setup.API_VERSION || 0}/${setup.BASE_ID}/${table}?api_key=${setup.API_KEY}`;    
+    
     const response = await fetch(url, { 
         headers: {
             "Content-Type": "application/json"
@@ -53,12 +82,32 @@ const setupAirtablePostPut = async <T>({ table, recordId, payload }: AirtablePos
     return response.json();
 }
 
-export const getFromAirtable = ({ table, recordId, filters}: AirtableGetOptions) => {    
-    return setupAirtableGet({ table, recordId, filters});
+const setupAirtablePut = async <T>({ table, recordId, payload }: AirtablePutOptions<T>) => {
+    const url = `${setup.BASE_URL}/v${setup.API_VERSION || 0}/${setup.BASE_ID}/${table}${recordId ? '/'+recordId : ''}?api_key=${setup.API_KEY}`;
+    const response = await fetch(url, { 
+        headers: {
+            "Content-Type": "application/json"
+        }, 
+        body: JSON.stringify(payload), 
+        method: "PATCH"});
+    return response.json();
 }
 
-export const postToAirtable = <T>({ table, payload }: AirtablePostPutOptions<T>) => {
-    return setupAirtablePostPut<T>({ table, payload });
+export const getFromAirtable = ({ table, view, recordId, filters}: AirtableGetOptions) => {    
+    return setupAirtableGet({ table, view, recordId, filters});
+}
+
+export const postToAirtable = <T>({ table, payload }: AirtablePostOptions<T>) => {
+    return setupAirtablePost<T>({ table, payload });
+}
+
+export const putToAirtable = <T>({ table, recordId, payload }: AirtablePutOptions<T>) => {
+    return setupAirtablePut<T>({ table, recordId, payload });
+}
+
+
+export const deleteFromAirtable = <T>({ table, recordId }: AirtableDeleteOptions<T>) => {
+    return setupAirtableDelete<T>({ table, recordId });
 }
 
 

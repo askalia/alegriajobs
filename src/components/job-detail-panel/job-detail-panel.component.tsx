@@ -5,13 +5,14 @@ import Drawer from "../layouts/Drawer/Drawer";
 import Markdown from "markdown-to-jsx";
 import shortid from "shortid";
 import "./job-detail-panel.scss";
-import { JobApplyPanel } from "../job-apply-panel/job-apply-panel.component";
+import JobApplyPanel from "../job-apply-panel/job-apply-panel.component";
 import { IApplyJob } from "shared/services/candidature.service";
 
 export type JobDetailPanelProps = {
   job: Job;
   close: () => void;
-  applyJob: (data: IApplyJob) => void;
+  applyJob: (data: IApplyJob) => Promise<void>;
+  canApplyJob: boolean;
 };
 
 const formatSalary = (num: number) => {
@@ -27,7 +28,8 @@ const formatSalary = (num: number) => {
 export const JobDetailPanel: FC<JobDetailPanelProps> = ({
   job,
   close,
-  applyJob
+  applyJob,
+  canApplyJob
 }): ReactElement => {
   const [toggleApplyJobPanel, setToggleApplyJobPanel] = useState<boolean>(
     false
@@ -132,10 +134,11 @@ export const JobDetailPanel: FC<JobDetailPanelProps> = ({
                 <Button
                   color="success"
                   type="button"
+                  disabled={!canApplyJob}
                   onClick={(e) => setToggleApplyJobPanel(!toggleApplyJobPanel)}
                 >
                   <i className="ni ni-briefcase-24" />
-                  <span className="btn-inner--text">Apply now</span>
+                  <span className="btn-inner--text">{canApplyJob ? 'Apply now' : 'Already applied'}</span>
                 </Button>
               </Col>
             </>

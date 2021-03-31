@@ -1,6 +1,6 @@
 //import { v2 as cloudinary } from "cloudinary" // cloudinary = require('cloudinary').v2;
-import { Candidature, Job } from "shared/models";
-import { getFromAirtable, postToAirtable } from "./airtable.service";
+import { Candidature, Job, User } from "shared/models";
+import { deleteFromAirtable, getFromAirtable, postToAirtable, putToAirtable } from "./airtable.service";
 import { fileUploadService } from "./file-upload.service";
 import turndownService from "turndown";
 import shortid from "shortid";
@@ -10,6 +10,7 @@ export type IApplyJob = { job: Job, candidateId: string, resume: File, coverLett
 const applyJob = async ({ job, candidateId, resume, coverLetter} : IApplyJob): Promise<Candidature> => {
     const customFileName = shortid.generate();
     const filePublicUrl = await fileUploadService.uploadFile(resume, customFileName)    
+    console.log('filePublicUrl : ', filePublicUrl)
     if (filePublicUrl !== undefined){
         const data = {
             fields: {
@@ -20,8 +21,8 @@ const applyJob = async ({ job, candidateId, resume, coverLetter} : IApplyJob): P
               ],
               resume: [
                 {
-                    filename: ("" + filePublicUrl)?.split('/')?.pop()?.replace(".pdf", ".png"),
-                  url: filePublicUrl.replace(".pdf", ".png")
+                  filename: filePublicUrl.split('/').pop(),
+                  url: filePublicUrl
                 }
               ],                          
             }
@@ -36,6 +37,13 @@ const applyJob = async ({ job, candidateId, resume, coverLetter} : IApplyJob): P
     return Promise.reject();
 }
 
+const unapplyJob = async (candidatureId: Candidature["id"]): Promise<boolean> => {    
+  return deleteFromAirtable<Candidature["id"]>({
+    table: "candidatures",
+    recordId: candidatureId
+  })  
+}
+
 
 const listCandidatures = async (
   candidateId: string
@@ -43,16 +51,14 @@ const listCandidatures = async (
   const candidatures: { records: Candidature[] } = await getFromAirtable({
     table: "candidatures",
     filters : [
-      () => `FIND("${candidateId}", candidate)`
+      `FIND("${candidateId}", candidate)`
     ]
   });  
   return candidatures.records;
 };
   
-
-
-
 export const candidatureService = {
     applyJob,
+    unapplyJob,
     listCandidatures
 }

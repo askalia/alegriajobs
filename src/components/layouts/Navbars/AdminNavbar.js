@@ -16,7 +16,7 @@
 
 */
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 // reactstrap components
 import {
   DropdownMenu,
@@ -34,8 +34,15 @@ import {
   Container,
   Media
 } from "reactstrap";
+import candidateAuthService from "shared/services/candidate-auth.service";
 
 class AdminNavbar extends React.Component {
+
+  logOut = (e) => {
+    e.preventDefault();
+    candidateAuthService.logOut()
+  } 
+
   render() {
     return (
       <>
@@ -66,7 +73,7 @@ class AdminNavbar extends React.Component {
                     <span className="avatar avatar-sm rounded-circle">
                       <img
                         alt="..."
-                        src={require("assets/img/theme/team-4-800x800.jpg")}
+                        src={require("assets/img/theme/team-4-800x800.jpg").default}
                       />
                     </span>
                     <Media className="ml-2 d-none d-lg-block">
@@ -80,24 +87,24 @@ class AdminNavbar extends React.Component {
                   <DropdownItem className="noti-title" header tag="div">
                     <h6 className="text-overflow m-0">Welcome!</h6>
                   </DropdownItem>
-                  <DropdownItem to="/admin/user-profile" tag={Link}>
+                  <DropdownItem to="/candidate/user-profile" tag={Link}>
                     <i className="ni ni-single-02" />
                     <span>My profile</span>
                   </DropdownItem>
-                  <DropdownItem to="/admin/user-profile" tag={Link}>
+                  <DropdownItem to="/candidate/user-profile" tag={Link}>
                     <i className="ni ni-settings-gear-65" />
                     <span>Settings</span>
                   </DropdownItem>
-                  <DropdownItem to="/admin/user-profile" tag={Link}>
+                  <DropdownItem to="/candidate/user-profile" tag={Link}>
                     <i className="ni ni-calendar-grid-58" />
                     <span>Activity</span>
                   </DropdownItem>
-                  <DropdownItem to="/admin/user-profile" tag={Link}>
+                  <DropdownItem to="/candidate/user-profile" tag={Link}>
                     <i className="ni ni-support-16" />
                     <span>Support</span>
                   </DropdownItem>
                   <DropdownItem divider />
-                  <DropdownItem href="#pablo" onClick={e => e.preventDefault()}>
+                  <DropdownItem href="#pablo" onClick={this.logOut}>
                     <i className="ni ni-user-run" />
                     <span>Logout</span>
                   </DropdownItem>
@@ -111,4 +118,4 @@ class AdminNavbar extends React.Component {
   }
 }
 
-export default AdminNavbar;
+export default withRouter(AdminNavbar);

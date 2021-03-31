@@ -24,7 +24,7 @@ import { Container, Row, Col } from "reactstrap";
 import AuthNavbar from "components/layouts/Navbars/AuthNavbar.js";
 import AuthFooter from "components/layouts/Footers/AuthFooter.js";
 
-import routes from "routes.js";
+import routes from "./auth.routes";
 
 class Auth extends React.Component {
   componentDidMount() {
@@ -33,9 +33,9 @@ class Auth extends React.Component {
   componentWillUnmount() {
     document.body.classList.remove("bg-default");
   }
-  getRoutes = routes => {
+  getRoutes = routes => {    
     return routes.map((prop, key) => {
-      if (prop.layout === "/auth") {
+      if (true) {
         return (
           <Route
             path={prop.layout + prop.path}
@@ -55,7 +55,7 @@ class Auth extends React.Component {
           <AuthNavbar />
           <div className="header bg-gradient-info py-7 py-lg-8">
             <Container>
-              <div className="header-body text-center mb-7">
+              {false && <div className="header-body text-center mb-7">
                 <Row className="justify-content-center">
                   <Col lg="5" md="6">
                     <h1 className="text-white">Welcome!</h1>
@@ -65,7 +65,9 @@ class Auth extends React.Component {
                     </p>
                   </Col>
                 </Row>
+                
               </div>
+  }
             </Container>
             <div className="separator separator-bottom separator-skew zindex-100">
               <svg

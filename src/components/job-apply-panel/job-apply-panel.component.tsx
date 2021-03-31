@@ -7,16 +7,22 @@ import "./job-apply-panel.scss";
 import "react-quill/dist/quill.snow.css";
 import { IApplyJob } from "shared/services/candidature.service";
 import { candidateService } from "shared/services/candidate.service";
+import { RouteComponentProps, withRouter } from "react-router-dom";
+import { candidaturesActions } from "store/candidatures/candidatures.actions";
+import { connect } from "react-redux";
 
 type IJobApplyPanelProps = {
   job: Job;
   close: () => void;
   applyJob: (data: IApplyJob) => Promise<any>;
-};
-export const JobApplyPanel: FC<IJobApplyPanelProps> = ({
+  refreshCandidatures: (candidateId: string) => Promise<void>;
+} & RouteComponentProps;
+const JobApplyPanel: FC<IJobApplyPanelProps> = ({
   job,
   close,
   applyJob,
+  history,
+  refreshCandidatures,
 }) => {
   const [coverLetter, setCoverLetter] = useState<string>("");
   const [resume, setResume] = useState<FileList>();
@@ -30,11 +36,12 @@ export const JobApplyPanel: FC<IJobApplyPanelProps> = ({
       coverLetter,
       resume: (resume as FileList)[0],
       job,
-    }).then(() => {
-      setResume(undefined);
-      setCoverLetter("");
-    });
+    })
+      .then(() => refreshCandidatures(candidateService.getCandidateId()))
+      .then(redirectToJobsApplied);
   };
+
+  const redirectToJobsApplied = () => history.push("/candidate/jobs/applied");
 
   const onFileSelected = (event: MouseEvent) => {
     setResume((event.target as HTMLInputElement).files as FileList);
@@ -110,3 +117,9 @@ export const JobApplyPanel: FC<IJobApplyPanelProps> = ({
     </>
   );
 };
+
+const mapDispatchToProps = () => ({
+  refreshCandidatures: candidaturesActions.refreshCandidatures,
+});
+
+export default connect(null, mapDispatchToProps)(withRouter(JobApplyPanel));

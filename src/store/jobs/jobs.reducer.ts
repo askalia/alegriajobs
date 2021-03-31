@@ -1,15 +1,20 @@
-import { Job } from "../../shared/models"
-import {  JobsActionTypes } from "./jobs.actions"
+import { putToAirtable } from "shared/services/airtable.service";
+import candidateAuthService from "shared/services/candidate-auth.service";
+import { jobService } from "shared/services/jobs.service";
+import { BookmarkedJobs, Job, User } from "../../shared/models"
+import {  jobActions, JobsActionTypes, mountJoblist, toggleCandidateBookmarkJob } from "./jobs.actions"
 
 export interface IJobsStore {
     jobList: Job[];
-    candidateBookmarkedJobs: Job['id'][];
+    candidateBookmarkedJobs: BookmarkedJobs|null;
 }
 
 const initialJoblistStore: IJobsStore = {
     jobList: [],
-    candidateBookmarkedJobs: []
+    candidateBookmarkedJobs: null
 }
+
+
 
 function reducerBuilder<S, A>(store: S) {    
     var reducersMap = new Map<A, Function>();        
@@ -29,90 +34,104 @@ export const jobsReducer = (
     store: IJobsStore = initialJoblistStore,
     action: { type: JobsActionTypes, payload: unknown }
 ) => {
+
+    switch (action.type){
+        case JobsActionTypes.SET_JOBLIST :
+            return setJobList(store, action.payload as Job[])            
+        case JobsActionTypes.TOGGLE_BOOKMARK_JOB:
+            return toogleBookmarkJob(store, action.payload as string);
+        case JobsActionTypes.MOUNT_CANDIDATE_BOOKMARKED_JOBS:
+            return mountCandidatureBookmarkedJobs(store, action.payload as BookmarkedJobs);
+        default:
+            return store;
+    }
     
-    return reducerBuilder<IJobsStore, JobsActionTypes>(store)
+    /*return reducerBuilder<IJobsStore, JobsActionTypes>(store)
     .set(JobsActionTypes.SET_JOBLIST, setJobList)
     .set(JobsActionTypes.TOGGLE_BOOKMARK_JOB, toogleBookmarkJob)
     .set(JobsActionTypes.MOUNT_CANDIDATE_BOOKMARKED_JOBS, mountCandidatureBookmarkedJobs)
     .run(action.type, action.payload)
-    
+    */
 }
 
 
 
 const setJobList = (store: IJobsStore, jobList: Job[]) => {
-    console.log('setJobList ')
-    if (store.jobList.length > 0){            
+    if (store.jobList.length > 0){  
         return store;
     }
-    const c = {
+    return {
         ...store,
         jobList: [
             ...store.jobList,
             ...jobList
         ]
     };
-    console.log('CCC : ', c)
-    return c;
 };
 
 const toogleBookmarkJob = (store: IJobsStore, jobId: string) => {
-    if (store.candidateBookmarkedJobs.includes(jobId)) {
-        return {
-            ...store,
-            candidateBookmarkedJobs : store.candidateBookmarkedJobs.filter(
-            (favJobId) => favJobId !== jobId
-            ),
-        };
+
+
+    if (store.candidateBookmarkedJobs === null){
+        store.candidateBookmarkedJobs = {
+            fields: {
+                candidate: [candidateAuthService.getCandidate().id],
+                jobs: [jobId]
+            }
+        } as BookmarkedJobs
     }
-    return { ...store, candidateBookmarkedJobs: [...store.candidateBookmarkedJobs , jobId] };
+    console.log('STATE OF : ', store.candidateBookmarkedJobs)
+    let newStore = null;
+    // is inside : remove
+    if ((store.candidateBookmarkedJobs?.fields?.jobs || []).includes(jobId)) {
+        console.log('contains job')
+        const newBookmarkedJobs = {
+            ...store.candidateBookmarkedJobs
+        }
+        newBookmarkedJobs.fields.jobs = newBookmarkedJobs.fields.jobs.filter(
+            (favJobId) => favJobId !== jobId
+        );
+
+        newStore = {
+            ...store,
+            candidateBookmarkedJobs : newBookmarkedJobs,
+        };
+        console.log('STATE OF AFTER: ', store.candidateBookmarkedJobs)
+    }
+    // no exist : add
+    else {        
+        newStore = {
+            ...store     
+        };
+        (newStore.candidateBookmarkedJobs as BookmarkedJobs).fields.jobs = [
+            ...store.candidateBookmarkedJobs?.fields?.jobs || [],
+            jobId
+        ];        
+    }   
+    console.log('store is now : ', newStore)
+    const bookmarkedJobToSend = { ...newStore.candidateBookmarkedJobs };
+    delete bookmarkedJobToSend.createdTime;    
+    console.log('PATcH : ', {
+        table:"bookmarked_jobs",
+        payload: {
+            records: [
+                bookmarkedJobToSend
+            ]
+        }
+    })
+    putToAirtable<{ records: BookmarkedJobs[]}>({
+        table:"bookmarked_jobs",
+        payload: {
+            records: [
+                bookmarkedJobToSend
+            ]
+        }
+    })
+
+    return newStore  ;
 };
 
-const mountCandidatureBookmarkedJobs = (store: IJobsStore, candidateBookmarkedJobs: Job["id"][]) => ({
+const mountCandidatureBookmarkedJobs = (store: IJobsStore, candidateBookmarkedJobs: BookmarkedJobs) => ({
     ...store,
-    candidateBookmarkedJobs: [
-        ...store.candidateBookmarkedJobs || [],
-        ...candidateBookmarkedJobs ||[]
-    ]
+    candidateBookmarkedJobs
 })
-
-/*
-const runReducer = (store: IJobsStore) => {
-    const _listReducers = (store: IJobsStore) => ({
-        [JobsActionTypes.SET_JOBLIST as string] : (c): IJobsStore => {
-            if (store.jobList.length > 0){            
-                return store;
-            }
-            return {
-                ...store,
-                jobList: [
-                    ...store.jobList,
-                    ...jobList
-                ]
-            };
-        },
-        [JobsActionTypes.TOGGLE_BOOKMARK_JOB as string] : (jobId: string): IJobsStore => {        
-            if (store.candidateBookmarkedJobs.includes(jobId)) {
-                return {
-                    ...store,
-                    candidateBookmarkedJobs : store.candidateBookmarkedJobs.filter(
-                    (favJobId) => favJobId !== jobId
-                    ),
-                };
-            }
-            return { ...store, candidateBookmarkedJobs: [...store.candidateBookmarkedJobs , jobId] };
-        },
-        [JobsActionTypes.MOUNT_CANDIDATE_BOOKMARKED_JOBS as string] : (candidateBookmarkedJobs: Job["id"][] ): IJobsStore => {
-            return {
-                ...store,
-                candidateBookmarkedJobs: [
-                    ...store.candidateBookmarkedJobs || [],
-                    ...candidateBookmarkedJobs ||[]
-                ]
-            }
-        }        
-    });
-    return (action: { type: JobsActionTypes, payload: unknown }): IJobsStore => (
-        (_listReducers(store)[action.type] as Function)?.(action.payload) || store
-    )
-}*/

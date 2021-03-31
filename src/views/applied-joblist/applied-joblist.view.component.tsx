@@ -20,6 +20,11 @@ import {
   JoblistDispatchers,
 } from "store/jobs/jobs.dispatchers";
 
+import "./applied-joblist.view.component.scss"
+import { jobListSelectors } from "store/jobs/jobs.selectors";
+import { candidaturesSelectors } from "store/candidatures/candidatures.selectors";
+import { candidatureService } from "shared/services/candidature.service";
+
 interface IAppliedJobListViewState {
   displayAs: "CARDS" | "TABLE";
   //openCandidatureDetailPanel: boolean;
@@ -55,7 +60,6 @@ class AppliedJobListView extends React.Component<
   }
 
   async componentDidMount() {
-    await this.loadData();
     this.handleDetailPanel();
   }
 
@@ -95,7 +99,7 @@ class AppliedJobListView extends React.Component<
     this.setState(() => ({
       currentCandidature: null,
     }));
-    (this.props as RouteComponentProps).history.push(`/admin/jobs/applied`);
+    (this.props as RouteComponentProps).history.push(`/candidate/jobs/applied`);
   };
 
   findJobById = (jobId: string) => {
@@ -107,12 +111,17 @@ class AppliedJobListView extends React.Component<
     this.followRoute(candidature?.id as string);
   };
 
+  onUnapplyCandidature = (candidature: Candidature) => {
+    this.props.unapplyJob(candidature.id);
+  }
+  
+
   followRoute(routeSuffix: string) {
     if (!routeSuffix) {
       return;
     }
     (this.props as RouteComponentProps).history.push(
-      `/admin/jobs/applied/${routeSuffix}`
+      `/candidate/jobs/applied/${routeSuffix}`
     );
   }
 
@@ -123,11 +132,12 @@ class AppliedJobListView extends React.Component<
 
   render() {
     const { candidatures } = this.props;
-
+  
     const panelsCommonProps = {
       candidatures,
       findJobById: this.findJobById.bind(this),
       onSelect: this.onSelectCandidature,
+      onUnapply: this.onUnapplyCandidature
     };
 
     return (
@@ -146,7 +156,7 @@ class AppliedJobListView extends React.Component<
             />
           )}
           <Row>
-            <div className="col">
+            <div className="col list-jobs-applied">
               {this.state.displayAs === "TABLE" ? (
                 <AppliedJoblistTable {...panelsCommonProps} />
               ) : (
@@ -161,8 +171,8 @@ class AppliedJobListView extends React.Component<
 }
 
 const mapStateToProps = (state: IRootStore) => ({
-  candidatures: state.candidatures,
-  jobList: state.jobs.jobList,
+  candidatures: candidaturesSelectors.getCandidatures(state),
+  jobList: jobListSelectors.getJobsPublished(state),
 });
 
 const combineMapDispatchToProps = (

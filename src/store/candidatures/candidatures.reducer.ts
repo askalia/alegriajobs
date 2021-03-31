@@ -1,9 +1,13 @@
 import { Candidature } from "../../shared/models"
 import { CandidaturesActionsType } from "./candidatures.actions"
 
-export type ICandidaturesStore = Candidature[];
+export type ICandidaturesStore = {
+    candidatures: Candidature[];
+}
 
-const initialCandidaturesStore: ICandidaturesStore = [];
+const initialCandidaturesStore: ICandidaturesStore = {
+    candidatures: []
+};
 
 export const candidaturesReducer = (
     store: ICandidaturesStore = initialCandidaturesStore,
@@ -11,10 +15,13 @@ export const candidaturesReducer = (
 ) => {
     switch (action.type){
         case CandidaturesActionsType.APPLY_JOB :
-            return applyJob(store, action.payload as Candidature)
-
+            return applyJob(store, action.payload as Candidature);
+        case CandidaturesActionsType.UNAPPLY_JOB :
+            return unapplyJob(store, action.payload as Candidature['id']);
         case CandidaturesActionsType.MOUNT_CANDIDATURES : 
             return mountCandidatures(store, action.payload as Candidature[]);
+        case CandidaturesActionsType.REFRESH_CANDIDATURES : 
+            return refreshCandidatures(store, action.payload as Candidature[]);
         default :
             return store
     }
@@ -23,17 +30,29 @@ export const candidaturesReducer = (
 const applyJob = (store: ICandidaturesStore, candidatureCreated: Candidature) => ({
     ...store,
     candidatures: [
-        ...store,
+        ...store.candidatures,
         candidatureCreated
     ]
+});
+
+const unapplyJob = (store: ICandidaturesStore, candidatureId: Candidature['id']) => ({
+    ...store, 
+    candidatures: store.candidatures.filter(c => c.id !== candidatureId )
 })
 
 const mountCandidatures = (store: ICandidaturesStore, listCandidatures: Candidature[]) => {
-    if (store.length > 0){
+    if (store.candidatures.length > 0){
         return store;
     }    
-    return [
+    return {
         ...store,
-        ...listCandidatures
-    ]
+        candidatures: [
+            ...store.candidatures,
+            ...listCandidatures
+        ]
+    }
+}
+
+const refreshCandidatures = (store: ICandidaturesStore, listCandidatures: Candidature[]) => {
+    return listCandidatures
 }

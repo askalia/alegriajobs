@@ -17,7 +17,7 @@
 */
 /*eslint-disable*/
 import React from "react";
-import { NavLink as NavLinkRRD, Link } from "react-router-dom";
+import { NavLink as NavLinkRRD, Link, withRouter } from "react-router-dom";
 // nodejs library to set properties for components
 import { PropTypes } from "prop-types";
 
@@ -51,6 +51,7 @@ import {
   Row,
   Col
 } from "reactstrap";
+import candidateAuthService from "shared/services/candidate-auth.service";
 
 var ps;
 
@@ -63,8 +64,8 @@ class Sidebar extends React.Component {
     this.activeRoute.bind(this);
   }
   // verifies if routeName is the one active (in browser input)
-  activeRoute(routeName) {
-    return this.props.location.pathname.indexOf(routeName) > -1 ? "active" : "";
+  activeRoute(route) {
+    return this.props.location.pathname === route.layout + route.path ? "active" : "";
   }
   // toggles collapse between opened and closed (true/false)
   toggleCollapse = () => {
@@ -87,7 +88,7 @@ class Sidebar extends React.Component {
             to={prop.layout + prop.path}
             tag={NavLinkRRD}
             onClick={this.closeCollapse}
-            activeClassName="active"
+            activeClassName={this.activeRoute(prop) ? "active" : ""}
           >
             <i className={prop.icon} />
             {prop.name}
@@ -96,6 +97,15 @@ class Sidebar extends React.Component {
       );
     });
   };
+
+  logOut = async (e) => {
+    e.preventDefault();
+    await candidateAuthService.logOut();
+    this.props.history.push('/')
+    
+    
+  } 
+  
   render() {
     const { bgColor, routes, logo } = this.props;
     let navbarBrandProps;
@@ -128,14 +138,12 @@ class Sidebar extends React.Component {
           {/* Brand */}
           {logo ? (
             <NavbarBrand className="pt-0" {...navbarBrandProps}>
-              <img
-                alt={logo.imgAlt}
-                className="navbar-brand-img"
-                src={logo.imgSrc || ""}
-              />
+              Lowcode Jobboard
             </NavbarBrand>
           ) : null}
           {/* User */}
+          <hr className="my-3" />
+
           <Nav className="align-items-center d-md-none">
             <UncontrolledDropdown nav>
               <DropdownToggle nav className="nav-link-icon">
@@ -167,24 +175,24 @@ class Sidebar extends React.Component {
                 <DropdownItem className="noti-title" header tag="div">
                   <h6 className="text-overflow m-0">Welcome!</h6>
                 </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
+                <DropdownItem to="/candidate/user-profile" tag={Link}>
                   <i className="ni ni-single-02" />
                   <span>My profile</span>
                 </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
+                <DropdownItem to="/candidate/user-profile" tag={Link}>
                   <i className="ni ni-settings-gear-65" />
                   <span>Settings</span>
                 </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
+                <DropdownItem to="/candidate/user-profile" tag={Link}>
                   <i className="ni ni-calendar-grid-58" />
                   <span>Activity</span>
                 </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
+                <DropdownItem to="/candidate/user-profile" tag={Link}>
                   <i className="ni ni-support-16" />
                   <span>Support</span>
                 </DropdownItem>
                 <DropdownItem divider />
-                <DropdownItem href="#pablo" onClick={e => e.preventDefault()}>
+                <DropdownItem href="#pablo" onClick={this.logOut}>
                   <i className="ni ni-user-run" />
                   <span>Logout</span>
                 </DropdownItem>
@@ -238,13 +246,15 @@ class Sidebar extends React.Component {
               </InputGroup>
             </Form>
             {/* Navigation */}
+            
             <Nav navbar>{this.createLinks(routes)}</Nav>
             {/* Divider */}
             <hr className="my-3" />
             {/* Heading */}
-            <h6 className="navbar-heading text-muted">Documentation</h6>
+            { false && <h6 className="navbar-heading text-muted">Documentation</h6>}
             {/* Navigation */}
-            <Nav className="mb-md-3" navbar>
+            
+            {false && <Nav className="mb-md-3" navbar>
               <NavItem>
                 <NavLink href="https://demos.creative-tim.com/argon-dashboard-react/#/documentation/overview?ref=adr-admin-sidebar">
                   <i className="ni ni-spaceship" />
@@ -263,7 +273,7 @@ class Sidebar extends React.Component {
                   Components
                 </NavLink>
               </NavItem>
-            </Nav>
+            </Nav>}
             <Nav className="mb-md-3" navbar>
               <NavItem className="active-pro active">
                 <NavLink href="https://www.creative-tim.com/product/argon-dashboard-pro-react?ref=adr-admin-sidebar">
@@ -300,4 +310,4 @@ Sidebar.propTypes = {
   })
 };
 
-export default Sidebar;
+export default withRouter(Sidebar);
