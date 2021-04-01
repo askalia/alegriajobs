@@ -1,33 +1,22 @@
 {
-  "name": "",
+  "name": "lowcode-jobboard",
   "version": "1.1.0",
-  "description": "React version of Argon Dashboard by Creative Tim",
+  "description": "A jobboard made up with reactJs, Airtable, Firebase",
   "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/creativetimofficial/argon-dashboard-react.git"
-  },
-  "keywords": [
-    "react",
-    "reactjs",
-    "argon",
-    "argon-react",
-    "dashboard",
-    "dashboard-react",
-    "argon-dashboard",
-    "argon-dashboard-react"
-  ],
-  "author": "Creative Tim",
+  "homepage": "https://askalia.github.io/react-airtable-jobboard",
+  "author": "joris grouillet",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/creativetimofficial/argon-dashboard-react/issues"
+    "url": "https://github.com/askalia/react-airtable-jobboard/issues"
   },
-  "homepage": "https://demos.creative-tim.com/argon-dashboard-react/",
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && cp build/index.html build/404.html",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "prepublish": "yarn build",
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -d build",
     "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && npm start",
     "compile-sass": "node-sass src/assets/scss/argon-dashboard-react.scss src/assets/css/argon-dashboard-react.css",
     "minify-sass": "node-sass src/assets/scss/argon-dashboard-react.scss src/assets/css/argon-dashboard-react.min.css --output-style compressed",

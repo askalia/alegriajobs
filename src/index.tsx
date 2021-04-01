@@ -15,7 +15,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename="/react-airtable-jobboard">
       <StoreProvider store={store}>
         <AuthProvider>
           <GuardRoute

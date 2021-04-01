@@ -7,7 +7,7 @@ const candidateAuthService = {
         auth.signOut()
         .then(() => {
             candidateAuthService.clearCandidate();
-            window.location.href = "/auth/login";
+            window.location.href = "/react-airtable-jobboard/auth/login";
         })
         
     },
